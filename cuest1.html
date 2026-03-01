@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📱 Contraguerilla · móvil</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #d9e0eb;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .quiz-wrapper {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 40px rgba(0, 15, 30, 0.25);
+            padding: 20px 18px;
+            margin: 5px 0 20px;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b2a41;
+            border-left: 8px solid #b22222;
+            padding-left: 16px;
+            margin: 0 0 8px 0;
+            line-height: 1.2;
+        }
+        .header-desc {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .badge {
+            background: #dee7f2;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1c3f5c;
+        }
+        .pregunta {
+            background: #f7fafd;
+            border-radius: 28px;
+            padding: 18px 16px;
+            margin-bottom: 22px;
+            border: 2px solid transparent;
+            transition: 0.15s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+        }
+        .pregunta.correcta { background: #e2f3e2; border-color: #1e7e34; }
+        .pregunta.incorrecta { background: #ffe9e7; border-color: #b53b3b; }
+
+        .encabezado {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 10px 8px;
+            margin-bottom: 15px;
+        }
+        .num-preg {
+            background: #102b47;
+            color: white;
+            border-radius: 60px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .enunciado {
+            font-weight: 650;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            color: #04233e;
+            flex: 1;
+        }
+        .pagina-ref {
+            background: #cfdcf0;
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #102b47;
+            white-space: nowrap;
+        }
+        .opciones { display: flex; flex-direction: column; gap: 12px; margin: 12px 0 5px; }
+        .opcion {
+            background: white;
+            border-radius: 50px;
+            padding: 14px 20px;
+            border: 1px solid #b6cae5;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        .opcion:hover { background: #e3edfe; }
+        input[type="radio"] { width: 20px; height: 20px; flex-shrink: 0; accent-color: #1e3e6e; }
+
+        .completar-input {
+            width: 100%;
+            border-radius: 60px;
+            border: 1px solid #9bb1d3;
+            padding: 16px 22px;
+            font-size: 1.05rem;
+            background: white;
+            margin: 8px 0 5px;
+        }
+
+        /* orden */
+        .orden-container { background: #eef4fc; border-radius: 30px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .orden-item {
+            background: white; border-radius: 60px; padding: 12px 18px;
+            display: flex; align-items: center; gap: 12px; border: 1px solid #a0b7d9;
+            flex-wrap: wrap;
+        }
+        .orden-texto { font-weight: 500; flex: 1; font-size: 1rem; }
+        .orden-select { padding: 8px 12px; border-radius: 40px; border: 1px solid #1d3f6e; font-weight: 600; width: 75px; font-size: 1rem; background: white; }
+
+        /* columnas */
+        .columnas-flex { display: flex; flex-direction: column; gap: 20px; margin: 10px 0; }
+        .col-izq, .col-der { width: 100%; }
+        .item-col {
+            background: white; border-radius: 60px; padding: 12px 18px; margin-bottom: 10px;
+            border: 1px solid #8ea5cf; display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px;
+        }
+        .col-select { padding: 8px 8px; border-radius: 30px; border: 1px solid #1e3b5e; width: 140px; background: white; font-size: 0.9rem; max-width: 45%; }
+
+        .feedback {
+            font-size: 0.98rem;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #edf3fd;
+            border-radius: 30px;
+            border-left: 5px solid #2f4b78;
+            word-break: break-word;
+        }
+        .botonera {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0 20px;
+        }
+        button {
+            background: #0a2942;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 18px 20px;
+            border-radius: 60px;
+            box-shadow: 0 6px 0 #03121f;
+            cursor: pointer;
+            transition: 0.1s;
+            width: 100%;
+            letter-spacing: 0.3px;
+            border: 1px solid #ffffff30;
+        }
+        button.reset { background: #4f3d2b; box-shadow: 0 6px 0 #2e231b; }
+        button:active { transform: translateY(4px); box-shadow: 0 2px 0 #03121f; }
+
+        .resultado-global {
+            background: #dae6fb;
+            border-radius: 50px;
+            padding: 22px 18px;
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #002856;
+            border: 2px solid #002856;
+            line-height: 1.2;
+        }
+        footer { text-align: center; color: #48658b; margin-top: 25px; font-size: 0.9rem; }
+        .nota-pie { background: #fcf2dd; border-radius: 40px; padding: 12px; margin: 15px 0 5px; text-align: center; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper" id="quizWrapper">
+    <h1>⚔️ CONTRAGUERRILLA · MÓVIL</h1>
+    <div class="header-desc">
+        <span class="badge">📱 58 preguntas únicas</span>
+        <span class="badge">📄 p.166–186</span>
+    </div>
+    <div id="preguntas"></div>
+
+    <div class="botonera">
+        <button id="calificarBtn">✅ CALIFICAR</button>
+        <button id="reiniciarBtn" class="reset">⟲ REINICIAR (nuevo orden)</button>
+    </div>
+    <div id="resultado" class="resultado-global">🔍 0 / 58</div>
+    <div class="nota-pie">📘 en incorrectas se muestra la respuesta correcta</div>
+    <footer>cuestionario adaptado para celular · opciones aleatorias</footer>
+</div>
+
+<script>
+(function() {
+    // ------------------------------------------------------------
+    // rawPreguntas: datos sin mezclar (igual que versión anterior)
+    // ------------------------------------------------------------
+    const rawPreguntas = [];
+
+    function addRaw(tipo, enunciado, pagina, opcionesRaw, correctaRaw, textoCompletar, ordenItems, parejas) {
+        rawPreguntas.push({
+            id: rawPreguntas.length,
+            tipo, enunciado, pagina,
+            opcionesRaw: opcionesRaw || [],
+            correctaRaw: correctaRaw,
+            textoCompletar: textoCompletar || '',
+            ordenItems: ordenItems ? [...ordenItems] : [],
+            correctOrder: ordenItems ? [...ordenItems] : [],
+            parejas: parejas || [],
+        });
+    }
+
+    // ---------- múltiple (siempre 4 opciones) ----------
+    addRaw('mc', '¿Objetivo de operaciones de contraguerilla? (418)', 166,
+        ['Controlar población y destruir bandas', 'Invadir territorio', 'Capturar recursos', 'Establecer colonias'], 0);
+    addRaw('mc', 'Factores tácticos a considerar (422):', 167,
+        ['Misión, Enemigo, Terreno, Medios', 'Tiempo, Ataque, Defensa, Retirada', 'Política, Economía, Social', 'Armas, Vehículos, Aviones'], 0);
+    addRaw('mc', 'Apoyo externo que puede tener la guerrilla (424-A):', 168,
+        ['Aéreo, fluvial, marítimo, terrestre', 'Solo lanzamiento aéreo', 'Contrabando terrestre', 'Financiero'], 0);
+    addRaw('mc', 'Efecto de interdicción de un solo medio de reabastecimiento (424-Aa):', 168,
+        ['Disminuir operaciones', 'No tendría efecto', 'Aumentaría poder', 'Se rendirían'], 0);
+    addRaw('mc', '¿Qué busca contraguerilla al evitar captura de equipo? (424-Ab)', 168,
+        ['Limitar operaciones enemigas', 'Quedarse con equipo', 'Venderlo', 'Entregarlo'], 0);
+    addRaw('mc', '¿En qué confía la guerrilla para apoyo logístico? (424-Ac)', 168,
+        ['Población civil', 'Fuerzas regulares', 'Mercenarios', 'Armas nucleares'], 0);
+    addRaw('mc', '¿Dónde operan normalmente las guerrillas? (424-C)', 169,
+        ['Retaguardia propia', 'Solo frontera', 'Mar', 'Capitales'], 0);
+    addRaw('mc', 'Característica de fuerzas especiales enemigas (431-C):', 171,
+        ['Alto adiestramiento, demoliciones', 'Falta de disciplina', 'Dependencia niños', 'Sin armamento'], 0);
+    addRaw('mc', 'Proclama de Forey 1862 (435):', 174,
+        ['Francia envía ejército modelo', 'Reclama territorio', 'Expropiación', 'Bloqueo naval'], 0);
+    addRaw('mc', 'Fases para control población civil (438):', 176,
+        ['Preparación, Declaratoria, Ejecutoria', 'Inicio, Intermedio, Final', 'Alerta, Conflicto, Paz', 'Secreta, Pública'], 0);
+    addRaw('mc', '¿Qué NO es medida de control común (444)?', 178,
+        ['Brazaletes GPS', 'Toque de queda', 'Racionamiento', 'Cateos'], 0);
+    addRaw('mc', 'Respecto a población civil, la contraguerilla busca (445):', 178,
+        ['Tenerla a favor (servicios básicos)', 'Reclutamiento forzoso', 'Expulsión', 'Ignorarla'], 0);
+    addRaw('mc', 'Operaciones tácticas de contraguerilla son conducidas por (421):', 167,
+        ['Unidades militarizadas y militares', 'Solo civiles', 'Policías', 'Periodistas'], 0);
+    addRaw('mc', 'Análisis del terreno incluye (425):', 169,
+        ['Observación, campos de tiro, cubiertas, obstáculos', 'Solo altitud', 'temperatura', 'recursos hídricos'], 0);
+    addRaw('mc', 'Efecto de operaciones psicológicas (458):', 182,
+        ['Dividir bandas, reducir apoyo, unión nacional', 'Incrementar miedo', 'Provocar invasión', 'Justificar terror'], 0);
+    addRaw('mc', 'Evitar en medidas de control (443):', 177,
+        ['Medidas drásticas no justificadas', 'Toque de queda', 'Informar a población', 'Propaganda'], 0);
+    addRaw('mc', 'Iniciativa en contraguerilla (459):', 183,
+        ['Reacción rápida para localizar, hostigar, destruir', 'Esperar órdenes', 'Solo defensa', 'Atacar embajadas'], 0);
+    addRaw('mc', 'Papel de traidores (431-E):', 171,
+        ['Reciben adiestramiento de fuerzas especiales', 'Líderes legítimos', 'Observadores', 'Mediadores'], 0);
+    addRaw('mc', 'Medio para incrementar movilidad (457-D):', 182,
+        ['Fuerzas de tarea con medios aéreos', 'Tanques pesados', 'Globos', 'Camellos'], 0);
+    addRaw('mc', 'Actividades Fase I (439):', 176,
+        ['Organizar comités, fuerzas control, destacamentos, búsqueda info', 'Toque de queda', 'Ejecuciones', 'Negociación'], 0);
+    addRaw('mc', 'Fase III ejecutoria (441):', 177,
+        ['Poner en vigor medidas', 'Retirada', 'Rendición', 'Entrega de armas'], 0);
+    addRaw('mc', 'Tácticas enemigas (431-F):', 171,
+        ['Cortas, sorpresivas, rápidas, violentas', 'Largas', 'Solo nocturnas', 'Sin violencia'], 0);
+    addRaw('mc', 'La contraguerilla debe conocer perfectamente (461):', 184,
+        ['El terreno', 'Códigos enemigos', 'Política exterior', 'Idioma'], 0);
+    addRaw('mc', 'Cualidades del combatiente (462):', 184,
+        ['Vigor físico, ingenio, audacia, resistencia', 'Riqueza', 'Edad, peso', 'Idiomas'], 0);
+    addRaw('mc', 'Soldado adiestrado desarrolla (466):', 186,
+        ['Confianza en sí mismo', 'Dependencia del guía', 'Miedo', 'Desprecio'], 0);
+    addRaw('mc', 'Fase II Declaratoria (440):', 177,
+        ['Dar a conocer limitaciones y sanciones', 'Iniciar combate', 'Ocultar info', 'Evacuar'], 0);
+    addRaw('mc', 'Unidad blindada enemiga puede (429):', 170,
+        ['Penetrar retaguardia y causar desorganización', 'Ambulancia', 'Negociar paz', 'Proteger civiles'], 0);
+    addRaw('mc', 'Método de infiltración de fuerzas especiales (431-D):', 171,
+        ['Paracaídas, descenso aeroterrestre, desembarcos marítimos', 'Disfraz', 'Tren', 'Globos'], 0);
+    addRaw('mc', 'Párrafo 450 establece:', 179,
+        ['Tropas deben conocer medidas control civil', 'Prohibido usar armas', 'Toque de queda 24h', 'Solo oficiales'], 0);
+    addRaw('mc', 'Falta de reabastecimiento en fuerzas especiales (431-B):', 171,
+        ['Disminuye eficiencia', 'Aumenta poder', 'No afecta', 'Se vuelven regulares'], 0);
+    addRaw('mc', 'Función de los guías (461-B):', 184,
+        ['Evitar extravío y emboscadas', 'Cargar equipo', 'Negociar', 'Intérpretes'], 0);
+    addRaw('mc', 'Adiestramiento según 463 incluye:', 185,
+        ['Marchas, combate cuerpo a cuerpo, abordaje', 'Solo tiro', 'Clases teóricas', 'Historia'], 0);
+    addRaw('mc', 'Adiestramiento pequeñas unidades (454):', 181,
+        ['Actuar dispersos para localizar y destruir', 'Formar bloques', 'Esperar en bases', 'Solo defensa'], 0);
+    addRaw('mc', 'Tácticas de fuerzas regulares/irregulares (431-F):', 171,
+        ['Cortas, sorpresivas, rápidas, violentas', 'Largas y lentas', 'Siempre apoyo aéreo', 'Evitan combate'], 0);
+    addRaw('mc', 'Información según 456-B:', 182,
+        ['No retenerla, compartir con escalón superior', 'Clasificarla secreta', 'Destruirla', 'Venderla'], 0);
+
+    // ---------- completar ----------
+    addRaw('completar', 'Operaciones contraguerilla se conducen en terreno _______ (418).', 166, null, null, 'propio');
+    addRaw('completar', 'Dos formas: control población y operaciones _______ de contraguerilla (419).', 167, null, null, 'tácticas');
+    addRaw('completar', 'Factor medios incluye personal, fuego, movilidad y _______ (426).', 169, null, null, 'comunicaciones');
+    addRaw('completar', 'Fuerzas especiales se infiltran por paracaídas o desembarcos _______ (431-D).', 171, null, null, 'marítimos');
+    addRaw('completar', 'Forey: “aguas _______” (435).', 174, null, null, 'corrompidas');
+    addRaw('completar', 'Fase II: dar a conocer _______ a la población (440).', 177, null, null, 'limitaciones');
+    addRaw('completar', 'Medida de control común: _______ de queda (444).', 178, null, null, 'toque');
+    addRaw('completar', 'Operaciones psicológicas buscan la _______ nacional (458-F).', 183, null, null, 'unión');
+    addRaw('completar', 'Conocimiento del _______ es clave (461).', 184, null, null, 'terreno');
+    addRaw('completar', 'Soldado desarrolla confianza en _______ mismo (466).', 186, null, null, 'sí');
+    addRaw('completar', 'Evitar apoyo población mediante operaciones _______ (424-Ac).', 168, null, null, 'psicológicas');
+    addRaw('completar', 'El plan superior debe _______ los planes subordinados (455-B).', 181, null, null, 'coordinar');
+
+    // ---------- orden (se mezclan al construir) ----------
+    function shuffleArr(arr) { let a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    addRaw('orden', 'Ordene fases control población civil (438):', 176, null, null, null, shuffleArr(['Preparación', 'Declaratoria', 'Ejecutoria']));
+    addRaw('orden', 'Ordene factores tácticos (422):', 167, null, null, null, shuffleArr(['Misión', 'Enemigo', 'Terreno', 'Medios']));
+    addRaw('orden', 'Ordene acciones Fase I (439):', 176, null, null, null, shuffleArr(['Organización comités', 'Organización fuerzas control', 'Destacamentos seguridad', 'Búsqueda información']));
+    addRaw('orden', 'Ordene cualidades combatiente (462):', 184, null, null, null, shuffleArr(['Vigor físico', 'Ingenio', 'Audacia', 'Resistencia']));
+
+    // ---------- columnas ----------
+    addRaw('columna', 'Relacione concepto con párrafo:', 166, null, null, null, null,
+        [['Operaciones contraguerilla', '418'], ['Factores tácticos', '422'], ['Fases control civil', '438'], ['Características tácticas', '453']]);
+    addRaw('columna', 'Mida control con descripción (444):', 178, null, null, null, null,
+        [['Toque de queda', 'prohibición circular'], ['Racionamiento', 'víveres y medicinas'], ['Cateos', 'registros'], ['Salvoconductos', 'dispensas']]);
+    addRaw('columna', 'Tipo de fuerza con característica:', 170, null, null, null, null,
+        [['Unidades especiales', 'alto adiestramiento'], ['Fuerzas aisladas', 'armamento capturado'], ['Grupos traidores', 'asesorados'], ['Fuerzas blindadas', 'causar desorganización']]);
+    addRaw('columna', 'Relacione fase con acción:', 176, null, null, null, null,
+        [['Preparación', 'organizar comités'], ['Declaratoria', 'anunciar sanciones'], ['Ejecutoria', 'aplicar medidas']]);
+    addRaw('columna', 'Vulnerabilidades guerrilla (424):', 168, null, null, null, null,
+        [['apoyo externo', 'interdicción'], ['captura equipos', 'prevenir'], ['apoyo población', 'reducir con opsicol']]);
+
+    // ----------------------------------------------------
+    // Construcción con mezcla real (opciones de mc reordenadas)
+    // ----------------------------------------------------
+    let preguntas = [];
+
+    function buildShuffled() {
+        preguntas = [];
+        rawPreguntas.forEach(raw => {
+            if (raw.tipo === 'mc') {
+                let opts = [...raw.opcionesRaw];
+                let correctVal = opts[raw.correctaRaw];
+                for (let i = opts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [opts[i], opts[j]] = [opts[j], opts[i]];
+                }
+                let newIdx = opts.indexOf(correctVal);
+                preguntas.push({
+                    id: preguntas.length,
+                    tipo: raw.tipo,
+                    enunciado: raw.enunciado,
+                    pagina: raw.pagina,
+                    opciones: opts,
+                    correctaIdx: newIdx,
+                });
+            } else if (raw.tipo === 'completar') {
+                preguntas.push({
+                    id: preguntas.length,
+                    tipo: raw.tipo,
+                    enunciado: raw.enunciado,
+                    pagina: raw.pagina,
+                    textoCompletar: raw.textoCompletar,
+                });
+            } else if (raw.tipo === 'orden') {
+                let mezclado = shuffleArr(raw.ordenItems);
+                preguntas.push({
+                    id: preguntas.length,
+                    tipo: raw.tipo,
+                    enunciado: raw.enunciado,
+                    pagina: raw.pagina,
+                    ordenItems: mezclado,
+                    correctOrder: raw.correctOrder,
+                });
+            } else if (raw.tipo === 'columna') {
+                preguntas.push({
+                    id: preguntas.length,
+                    tipo: raw.tipo,
+                    enunciado: raw.enunciado,
+                    pagina: raw.pagina,
+                    parejas: raw.parejas,
+                });
+            }
+        });
+    }
+    buildShuffled();
+
+    // ========== RENDER ==========
+    const container = document.getElementById('preguntas');
+    function renderQuiz() {
+        let html = '';
+        preguntas.forEach((p, idx) => {
+            html += `<div class="pregunta" id="preg-${idx}" data-tipo="${p.tipo}">`;
+            html += `<div class="encabezado"><span class="num-preg">${idx+1}</span><span class="enunciado">${p.enunciado}</span><span class="pagina-ref">p.${p.pagina}</span></div>`;
+
+            if (p.tipo === 'mc') {
+                html += `<div class="opciones" id="input-${idx}">`;
+                p.opciones.forEach((opt, optIdx) => {
+                    html += `<label class="opcion"><input type="radio" name="preg_${idx}" value="${optIdx}"> ${opt}</label>`;
+                });
+                html += `</div>`;
+            } else if (p.tipo === 'completar') {
+                html += `<input class="completar-input" type="text" id="input-${idx}" placeholder="respuesta exacta">`;
+            } else if (p.tipo === 'orden') {
+                html += `<div class="orden-container" id="input-${idx}">`;
+                p.ordenItems.forEach((item, pos) => {
+                    html += `<div class="orden-item"><span class="orden-texto">🔹 ${item}</span> <select class="orden-select" data-preg="${idx}" data-pos="${pos}">`;
+                    for (let i=0; i<p.ordenItems.length; i++) html += `<option value="${i}">${i+1}</option>`;
+                    html += `</select></div>`;
+                });
+                html += `</div>`;
+            } else if (p.tipo === 'columna') {
+                html += `<div class="columnas-flex" id="input-${idx}"><div class="col-izq">`;
+                p.parejas.forEach((par, pairIdx) => {
+                    html += `<div class="item-col"><span>${par[0]}</span> <select class="col-select" data-preg="${idx}" data-pair="${pairIdx}"><option value="">—elige—</option>`;
+                    p.parejas.forEach(opt => html += `<option value="${opt[1]}">${opt[1]}</option>`);
+                    html += `</select></div>`;
+                });
+                html += `</div></div>`;
+            }
+            html += `<div class="feedback" id="fb-${idx}"></div>`;
+            html += `</div>`;
+        });
+        container.innerHTML = html;
+    }
+    renderQuiz();
+
+    // ========== CALIFICAR ==========
+    document.getElementById('calificarBtn').addEventListener('click', function() {
+        let aciertos = 0;
+        preguntas.forEach((p, idx) => {
+            const fb = document.getElementById(`fb-${idx}`);
+            const divP = document.getElementById(`preg-${idx}`);
+            let correcta = false;
+            let msg = '';
+
+            if (p.tipo === 'mc') {
+                const radios = document.getElementsByName(`preg_${idx}`);
+                let sel = null;
+                for (let r of radios) if (r.checked) { sel = r.value; break; }
+                if (sel !== null && parseInt(sel) === p.correctaIdx) correcta = true;
+                if (!correcta) msg = `❌ Correcta: "${p.opciones[p.correctaIdx]}" (op ${p.correctaIdx+1})`;
+            } else if (p.tipo === 'completar') {
+                const inp = document.getElementById(`input-${idx}`);
+                if (inp && inp.value.trim().toLowerCase() === p.textoCompletar.toLowerCase()) correcta = true;
+                if (!correcta) msg = `❌ Respuesta: "${p.textoCompletar}"`;
+            } else if (p.tipo === 'orden') {
+                const selects = document.querySelectorAll(`#input-${idx} .orden-select`);
+                let user = []; selects.forEach(s => user.push(parseInt(s.value)));
+                if (user.join() === [0,1,2,3].slice(0,p.ordenItems.length).join()) correcta = true;
+                if (!correcta) msg = `❌ Orden correcto: ${p.correctOrder.join(' → ')}`;
+            } else if (p.tipo === 'columna') {
+                const selects = document.querySelectorAll(`#input-${idx} .col-select`);
+                let ok = true;
+                selects.forEach((s, i) => { if (s.value !== p.parejas[i][1]) ok = false; });
+                if (ok) correcta = true;
+                if (!correcta) msg = `❌ Combinaciones: ${p.parejas.map(par=>`${par[0]} → ${par[1]}`).join('; ')}`;
+            }
+
+            if (correcta) { divP.classList.add('correcta'); divP.classList.remove('incorrecta'); fb.innerHTML = '✅ Correcto'; aciertos++; }
+            else { divP.classList.add('incorrecta'); divP.classList.remove('correcta'); fb.innerHTML = msg || '❌ Incorrecto'; }
+        });
+        document.getElementById('resultado').innerText = `🎯 ${aciertos} / ${preguntas.length}`;
+    });
+
+    document.getElementById('reiniciarBtn').addEventListener('click', function() {
+        buildShuffled();
+        renderQuiz();
+        document.getElementById('resultado').innerText = `🔍 0 / ${preguntas.length}`;
+    });
+})();
+</script>
+</body>
+</html>
