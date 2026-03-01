@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>📱 Contraguerilla · móvil</title>
+    <title>📘 Contraguerilla · preguntas trampa</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -194,7 +194,7 @@
 </head>
 <body>
 <div class="quiz-wrapper" id="quizWrapper">
-    <h1>⚔️ CONTRAGUERRILLA · MÓVIL</h1>
+    <h1>⚔️ CONTRAGUERRILLA · PREGUNTAS TRAMPA</h1>
     <div class="header-desc">
         <span class="badge">📱 58 preguntas únicas</span>
         <span class="badge">📄 p.166–186</span>
@@ -206,14 +206,14 @@
         <button id="reiniciarBtn" class="reset">⟲ REINICIAR (nuevo orden)</button>
     </div>
     <div id="resultado" class="resultado-global">🔍 0 / 58</div>
-    <div class="nota-pie">📘 en incorrectas se muestra la respuesta correcta</div>
-    <footer>cuestionario adaptado para celular · opciones aleatorias</footer>
+    <div class="nota-pie">📘 En incorrectas se muestra la respuesta correcta</div>
+    <footer>cuestionario adaptado para celular · opciones muy similares</footer>
 </div>
 
 <script>
 (function() {
     // ------------------------------------------------------------
-    // rawPreguntas: datos sin mezclar (igual que versión anterior)
+    // rawPreguntas: datos con opciones MUY SIMILARES (trampa)
     // ------------------------------------------------------------
     const rawPreguntas = [];
 
@@ -230,84 +230,223 @@
         });
     }
 
-    // ---------- múltiple (siempre 4 opciones) ----------
-    addRaw('mc', '¿Objetivo de operaciones de contraguerilla? (418)', 166,
-        ['Controlar población y destruir bandas', 'Invadir territorio', 'Capturar recursos', 'Establecer colonias'], 0);
-    addRaw('mc', 'Factores tácticos a considerar (422):', 167,
-        ['Misión, Enemigo, Terreno, Medios', 'Tiempo, Ataque, Defensa, Retirada', 'Política, Economía, Social', 'Armas, Vehículos, Aviones'], 0);
-    addRaw('mc', 'Apoyo externo que puede tener la guerrilla (424-A):', 168,
-        ['Aéreo, fluvial, marítimo, terrestre', 'Solo lanzamiento aéreo', 'Contrabando terrestre', 'Financiero'], 0);
-    addRaw('mc', 'Efecto de interdicción de un solo medio de reabastecimiento (424-Aa):', 168,
-        ['Disminuir operaciones', 'No tendría efecto', 'Aumentaría poder', 'Se rendirían'], 0);
-    addRaw('mc', '¿Qué busca contraguerilla al evitar captura de equipo? (424-Ab)', 168,
-        ['Limitar operaciones enemigas', 'Quedarse con equipo', 'Venderlo', 'Entregarlo'], 0);
-    addRaw('mc', '¿En qué confía la guerrilla para apoyo logístico? (424-Ac)', 168,
-        ['Población civil', 'Fuerzas regulares', 'Mercenarios', 'Armas nucleares'], 0);
-    addRaw('mc', '¿Dónde operan normalmente las guerrillas? (424-C)', 169,
-        ['Retaguardia propia', 'Solo frontera', 'Mar', 'Capitales'], 0);
-    addRaw('mc', 'Característica de fuerzas especiales enemigas (431-C):', 171,
-        ['Alto adiestramiento, demoliciones', 'Falta de disciplina', 'Dependencia niños', 'Sin armamento'], 0);
-    addRaw('mc', 'Proclama de Forey 1862 (435):', 174,
-        ['Francia envía ejército modelo', 'Reclama territorio', 'Expropiación', 'Bloqueo naval'], 0);
-    addRaw('mc', 'Fases para control población civil (438):', 176,
-        ['Preparación, Declaratoria, Ejecutoria', 'Inicio, Intermedio, Final', 'Alerta, Conflicto, Paz', 'Secreta, Pública'], 0);
-    addRaw('mc', '¿Qué NO es medida de control común (444)?', 178,
-        ['Brazaletes GPS', 'Toque de queda', 'Racionamiento', 'Cateos'], 0);
-    addRaw('mc', 'Respecto a población civil, la contraguerilla busca (445):', 178,
-        ['Tenerla a favor (servicios básicos)', 'Reclutamiento forzoso', 'Expulsión', 'Ignorarla'], 0);
-    addRaw('mc', 'Operaciones tácticas de contraguerilla son conducidas por (421):', 167,
-        ['Unidades militarizadas y militares', 'Solo civiles', 'Policías', 'Periodistas'], 0);
-    addRaw('mc', 'Análisis del terreno incluye (425):', 169,
-        ['Observación, campos de tiro, cubiertas, obstáculos', 'Solo altitud', 'temperatura', 'recursos hídricos'], 0);
-    addRaw('mc', 'Efecto de operaciones psicológicas (458):', 182,
-        ['Dividir bandas, reducir apoyo, unión nacional', 'Incrementar miedo', 'Provocar invasión', 'Justificar terror'], 0);
-    addRaw('mc', 'Evitar en medidas de control (443):', 177,
-        ['Medidas drásticas no justificadas', 'Toque de queda', 'Informar a población', 'Propaganda'], 0);
-    addRaw('mc', 'Iniciativa en contraguerilla (459):', 183,
-        ['Reacción rápida para localizar, hostigar, destruir', 'Esperar órdenes', 'Solo defensa', 'Atacar embajadas'], 0);
-    addRaw('mc', 'Papel de traidores (431-E):', 171,
-        ['Reciben adiestramiento de fuerzas especiales', 'Líderes legítimos', 'Observadores', 'Mediadores'], 0);
-    addRaw('mc', 'Medio para incrementar movilidad (457-D):', 182,
-        ['Fuerzas de tarea con medios aéreos', 'Tanques pesados', 'Globos', 'Camellos'], 0);
-    addRaw('mc', 'Actividades Fase I (439):', 176,
-        ['Organizar comités, fuerzas control, destacamentos, búsqueda info', 'Toque de queda', 'Ejecuciones', 'Negociación'], 0);
-    addRaw('mc', 'Fase III ejecutoria (441):', 177,
-        ['Poner en vigor medidas', 'Retirada', 'Rendición', 'Entrega de armas'], 0);
-    addRaw('mc', 'Tácticas enemigas (431-F):', 171,
-        ['Cortas, sorpresivas, rápidas, violentas', 'Largas', 'Solo nocturnas', 'Sin violencia'], 0);
-    addRaw('mc', 'La contraguerilla debe conocer perfectamente (461):', 184,
-        ['El terreno', 'Códigos enemigos', 'Política exterior', 'Idioma'], 0);
-    addRaw('mc', 'Cualidades del combatiente (462):', 184,
-        ['Vigor físico, ingenio, audacia, resistencia', 'Riqueza', 'Edad, peso', 'Idiomas'], 0);
-    addRaw('mc', 'Soldado adiestrado desarrolla (466):', 186,
-        ['Confianza en sí mismo', 'Dependencia del guía', 'Miedo', 'Desprecio'], 0);
-    addRaw('mc', 'Fase II Declaratoria (440):', 177,
-        ['Dar a conocer limitaciones y sanciones', 'Iniciar combate', 'Ocultar info', 'Evacuar'], 0);
-    addRaw('mc', 'Unidad blindada enemiga puede (429):', 170,
-        ['Penetrar retaguardia y causar desorganización', 'Ambulancia', 'Negociar paz', 'Proteger civiles'], 0);
-    addRaw('mc', 'Método de infiltración de fuerzas especiales (431-D):', 171,
-        ['Paracaídas, descenso aeroterrestre, desembarcos marítimos', 'Disfraz', 'Tren', 'Globos'], 0);
-    addRaw('mc', 'Párrafo 450 establece:', 179,
-        ['Tropas deben conocer medidas control civil', 'Prohibido usar armas', 'Toque de queda 24h', 'Solo oficiales'], 0);
-    addRaw('mc', 'Falta de reabastecimiento en fuerzas especiales (431-B):', 171,
-        ['Disminuye eficiencia', 'Aumenta poder', 'No afecta', 'Se vuelven regulares'], 0);
-    addRaw('mc', 'Función de los guías (461-B):', 184,
-        ['Evitar extravío y emboscadas', 'Cargar equipo', 'Negociar', 'Intérpretes'], 0);
-    addRaw('mc', 'Adiestramiento según 463 incluye:', 185,
-        ['Marchas, combate cuerpo a cuerpo, abordaje', 'Solo tiro', 'Clases teóricas', 'Historia'], 0);
-    addRaw('mc', 'Adiestramiento pequeñas unidades (454):', 181,
-        ['Actuar dispersos para localizar y destruir', 'Formar bloques', 'Esperar en bases', 'Solo defensa'], 0);
-    addRaw('mc', 'Tácticas de fuerzas regulares/irregulares (431-F):', 171,
-        ['Cortas, sorpresivas, rápidas, violentas', 'Largas y lentas', 'Siempre apoyo aéreo', 'Evitan combate'], 0);
-    addRaw('mc', 'Información según 456-B:', 182,
-        ['No retenerla, compartir con escalón superior', 'Clasificarla secreta', 'Destruirla', 'Venderla'], 0);
+    // ---------- MÚLTIPLE con respuestas muy similares ----------
+    addRaw('mc', 'Complete según 418: "Las operaciones de contraguerilla se conducen en terreno _____"', 166,
+        ['propio, con fuerzas militarizadas',        // correcta
+         'propio, con fuerzas militares',            // trampa: falta "militarizadas"
+         'enemigo, con fuerzas militarizadas',       // trampa: cambia "propio"
+         'nacional, con fuerzas regulares'], 0);     // trampa: sinónimos
 
-    // ---------- completar ----------
+    addRaw('mc', 'Factores tácticos a considerar según 422:', 167,
+        ['Misión, Enemigo, Terreno, Medios',         // correcta
+         'Misión, Terreno, Enemigo, Medios',         // trampa: orden alterado
+         'Objetivo, Adversario, Suelo, Equipo',      // trampa: sinónimos
+         'Plan, Oponente, Zona, Recursos'], 0);      // trampa: diferentes
+
+    addRaw('mc', 'Apoyo externo que puede tener la guerrilla según 424-A:', 168,
+        ['aéreo, fluvial, marítimo, terrestre',      // correcta
+         'aéreo, marítimo, terrestre, fluvial',      // trampa: orden diferente
+         'aéreo, naval, terrestre y fluvial',        // trampa: "naval" en vez de "marítimo"
+         'por aire, agua y tierra'], 0);              // trampa: demasiado genérico
+
+    addRaw('mc', 'Según 424-Aa, si la guerrilla depende de un solo medio externo, la interdicción produce:', 168,
+        ['disminuir o limitar sus operaciones',      // correcta
+         'limitar o disminuir sus operaciones',      // trampa: orden alterado
+         'reducir parcialmente su actividad',        // trampa: similar pero no textual
+         'afectar su capacidad ofensiva'], 0);       // trampa: paráfrasis
+
+    addRaw('mc', '¿Qué busca la contraguerilla al evitar que el enemigo capture equipo? (424-Ab)', 168,
+        ['limitar sus operaciones',                  // correcta
+         'limitar las operaciones enemigas',         // trampa: añade "enemigas"
+         'restringir su capacidad',                   // trampa: sinónimo
+         'evitar su fortalecimiento'], 0);            // trampa: interpretación
+
+    addRaw('mc', 'La guerrilla confía su apoyo logístico en (424-Ac):', 168,
+        ['la población civil',                        // correcta
+         'los civiles de la zona',                    // trampa: similar
+         'la población del área',                      // trampa: cambia "civil" por "del área"
+         'los habitantes'], 0);                        // trampa: genérico
+
+    addRaw('mc', 'Las guerrillas operan normalmente en (424-C):', 169,
+        ['áreas de nuestra retaguardia',              // correcta
+         'áreas de retaguardia propias',              // trampa: mismo significado
+         'zonas traseras propias',                     // trampa: sinónimos
+         'territorio controlado por el enemigo'], 0);  // trampa: opuesto
+
+    addRaw('mc', 'Característica de fuerzas especiales enemigas (431-C):', 171,
+        ['alto adiestramiento, demoliciones, comunicaciones, primeros auxilios',  // correcta
+         'alto entrenamiento, destrucciones, radio, medicina',                    // trampa: sinónimos
+         'adiestramiento elevado, explosivos, transmisiones, asistencia',         // trampa: diferentes términos
+         'capacidad superior en combate y apoyo'], 0);                            // trampa: resumen
+
+    addRaw('mc', 'Proclama de Forey 1862 (435): "Francia os envía un ejército _____"', 174,
+        ['modelo de orden y disciplina',              // correcta
+         'ejemplar en orden y disciplina',            // trampa: sinónimos
+         'modelo de disciplina y orden',              // trampa: orden invertido
+         'de orden y disciplina modelo'], 0);         // trampa: alterado
+
+    addRaw('mc', 'Fases para control población civil (438):', 176,
+        ['Preparación, Declaratoria, Ejecutoria',     // correcta
+         'Preparación, Ejecutoria, Declaratoria',     // trampa: orden incorrecto
+         'Planificación, Anuncio, Aplicación',        // trampa: sinónimos
+         'Organización, Declaración, Ejecución'], 0); // trampa: diferentes
+
+    addRaw('mc', '¿Qué NO es medida de control común según 444?', 178,
+        ['uso de brazaletes GPS',                     // correcta (NO mencionado)
+         'toque de queda',                             // trampa: sí mencionado
+         'racionamiento de víveres',                   // trampa: sí mencionado
+         'cateos'], 0);                                // trampa: sí mencionado
+
+    addRaw('mc', 'La contraguerilla busca respecto a la población civil (445):', 178,
+        ['tenerla a favor mediante servicios básicos', // correcta
+         'ganar su simpatía con ayuda elemental',      // trampa: paráfrasis
+         'atraerla con servicios fundamentales',       // trampa: sinónimos
+         'apoyarla para que colabore'], 0);            // trampa: interpretación
+
+    addRaw('mc', 'Las operaciones tácticas de contraguerilla son conducidas por (421):', 167,
+        ['unidades militarizadas y militares',         // correcta
+         'unidades militares y militarizadas',         // trampa: orden alterado
+         'fuerzas castrenses y paramilitares',         // trampa: términos rebuscados
+         'personal militar y civil armado'], 0);       // trampa: inexacto
+
+    addRaw('mc', 'El análisis del terreno incluye según 425:', 169,
+        ['observación, campos de tiro, cubiertas, obstáculos',           // correcta
+         'observación, cubiertas, campos de tiro, obstáculos',           // trampa: orden
+         'visibilidad, zonas de fuego, protección, barreras',            // trampa: sinónimos
+         'reconocimiento, defensa, escondites, dificultades'], 0);       // trampa: diferentes
+
+    addRaw('mc', 'Efecto de las operaciones psicológicas (458):', 182,
+        ['dividir bandas, reducir apoyo enemigo, unión nacional',        // correcta
+         'fraccionar grupos, disminuir ayuda adversaria, unidad patria', // trampa: sinónimos
+         'desorganizar traidores, restar simpatías, cohesión',           // trampa: paráfrasis
+         'debilitar al enemigo, fortalecer lealtad'], 0);                // trampa: resumen
+
+    addRaw('mc', '¿Qué debe evitarse en medidas de control? (443)', 177,
+        ['medidas drásticas no justificadas',         // correcta
+         'acciones severas sin razón',                 // trampa: paráfrasis
+         'decisiones extremas injustificadas',         // trampa: sinónimos
+         'castigos desproporcionados'], 0);            // trampa: interpretación
+
+    addRaw('mc', 'La iniciativa en contraguerilla (459) implica:', 183,
+        ['reacción rápida para localizar, hostigar o destruir',          // correcta
+         'respuesta veloz para ubicar, acosar o aniquilar',              // trampa: sinónimos
+         'acción inmediata de localización y ataque',                    // trampa: resumen
+         'capacidad de adelantarse al enemigo'], 0);                     // trampa: concepto general
+
+    addRaw('mc', 'Papel de los traidores según 431-E:', 171,
+        ['reciben adiestramiento de fuerzas especiales',                 // correcta
+         'son entrenados por fuerzas especiales',                        // trampa: casi igual
+         'adiestrados por comandos enemigos',                            // trampa: sinónimos
+         'instruidos por personal militar extranjero'], 0);             // trampa: general
+
+    addRaw('mc', 'Medio para incrementar movilidad (457-D):', 182,
+        ['fuerzas de tarea con medios aéreos',        // correcta
+         'agrupaciones tácticas con apoyo aéreo',      // trampa: sinónimos
+         'unidades aeromóviles combinadas',            // trampa: diferente
+         'empleo de helicópteros y aviones'], 0);      // trampa: específico
+
+    addRaw('mc', 'Actividades de la Fase I (439):', 176,
+        ['organización comités, fuerzas control, destacamentos seguridad, búsqueda info',  // correcta
+         'creación comités, control civil, puestos defensa, recolección datos',            // trampa: sinónimos
+         'establecer juntas, agrupaciones, vigilancia, información',                       // trampa: resumen
+         'planificar, organizar, asegurar, investigar'], 0);                               // trampa: genérico
+
+    addRaw('mc', 'Fase III ejecutoria (441):', 177,
+        ['poner en vigor las medidas',                 // correcta
+         'aplicar las disposiciones',                  // trampa: sinónimos
+         'ejecutar lo anunciado',                       // trampa: paráfrasis
+         'implementar los controles'], 0);              // trampa: similar
+
+    addRaw('mc', 'Tácticas enemigas (431-F):', 171,
+        ['cortas, sorpresivas, rápidas, violentas',    // correcta
+         'breves, inesperadas, veloces, agresivas',    // trampa: sinónimos
+         'acciones rápidas y contundentes',            // trampa: resumen
+         'fulminantes y repentinas'], 0);               // trampa: abreviado
+
+    addRaw('mc', 'La contraguerilla debe conocer perfectamente según 461:', 184,
+        ['el terreno',                                  // correcta
+         'el área de operaciones',                      // trampa: sinónimo
+         'la zona de combate',                          // trampa: sinónimo
+         'el sector donde opera'], 0);                  // trampa: sinónimo
+
+    addRaw('mc', 'Cualidades del combatiente (462):', 184,
+        ['vigor físico, ingenio, audacia, resistencia', // correcta
+         'fortaleza, inteligencia, valor, aguante',     // trampa: sinónimos
+         'energía, creatividad, arrojo, tenacidad',     // trampa: diferentes
+         'robustez, astucia, osadía, perseverancia'], 0); // trampa: sinónimos
+
+    addRaw('mc', 'Soldado adiestrado desarrolla (466):', 186,
+        ['confianza en sí mismo',                       // correcta
+         'seguridad personal',                           // trampa: sinónimo
+         'autoconfianza',                                // trampa: sinónimo
+         'fe en sus capacidades'], 0);                   // trampa: paráfrasis
+
+    addRaw('mc', 'Fase II Declaratoria (440) busca:', 177,
+        ['dar a conocer limitaciones y sanciones',      // correcta
+         'anunciar restricciones y castigos',           // trampa: sinónimos
+         'publicar las reglas y penalizaciones',        // trampa: sinónimos
+         'informar sobre prohibiciones'], 0);           // trampa: parcial
+
+    addRaw('mc', 'Unidad blindada enemiga puede (429):', 170,
+        ['penetrar retaguardia y causar desorganización', // correcta
+         'infiltrarse y crear caos',                      // trampa: resumen
+         'romper líneas y sembrar confusión',             // trampa: sinónimos
+         'atacar desde dentro'], 0);                      // trampa: vago
+
+    addRaw('mc', 'Método de infiltración de fuerzas especiales (431-D):', 171,
+        ['paracaídas, descenso aeroterrestre, desembarcos marítimos',  // correcta
+         'lanzamiento aéreo, caída libre, llegada por mar',            // trampa: sinónimos
+         'salto, aterrizaje, desembarco',                              // trampa: abreviado
+         'infiltración vertical y anfibia'], 0);                       // trampa: resumen
+
+    addRaw('mc', 'Párrafo 450 establece que las tropas deben:', 179,
+        ['conocer medidas control civil',                 // correcta
+         'estar familiarizadas con controles',            // trampa: sinónimos
+         'saber las reglas impuestas',                    // trampa: sinónimos
+         'entender las disposiciones'], 0);               // trampa: sinónimo
+
+    addRaw('mc', 'Falta de reabastecimiento en fuerzas especiales (431-B):', 171,
+        ['disminuye su eficiencia combativa',             // correcta
+         'reduce su capacidad de lucha',                  // trampa: sinónimos
+         'afecta su rendimiento',                         // trampa: genérico
+         'limita sus operaciones'], 0);                   // trampa: parcial
+
+    addRaw('mc', 'Función de los guías (461-B):', 184,
+        ['evitar extravío y emboscadas',                  // correcta
+         'prevenir pérdidas y ataques sorpresa',          // trampa: sinónimos
+         'no ser emboscados ni perderse',                 // trampa: paráfrasis
+         'orientar y alertar'], 0);                       // trampa: resumen
+
+    addRaw('mc', 'Adiestramiento según 463 incluye:', 185,
+        ['marchas, combate cuerpo a cuerpo, abordaje de vehículos',   // correcta
+         'caminatas, lucha cercana, montar/desmontar',                // trampa: sinónimos
+         'desplazamientos, pelea, técnicas de transporte',            // trampa: genérico
+         'ejercicios, defensa personal, movilidad'], 0);              // trampa: diferente
+
+    addRaw('mc', 'Adiestramiento pequeñas unidades (454) busca:', 181,
+        ['actuar dispersos para localizar y destruir',    // correcta
+         'operar separados para encontrar y aniquilar',   // trampa: sinónimos
+         'moverse con libertad para detectar y eliminar', // trampa: paráfrasis
+         'desplegarse para buscar y combatir'], 0);       // trampa: similar
+
+    addRaw('mc', 'Tácticas de fuerzas regulares/irregulares (431-F):', 171,
+        ['cortas, sorpresivas, rápidas, violentas',       // correcta
+         'breves, inesperadas, veloces, agresivas',       // trampa: sinónimos
+         'fulminantes, repentinas, expeditivas',          // trampa: resumen
+         'acciones contundentes y rápidas'], 0);          // trampa: resumen
+
+    addRaw('mc', 'Información según 456-B:', 182,
+        ['no retenerla, compartir con escalón superior',  // correcta
+         'transmitirla inmediatamente arriba',            // trampa: sinónimos
+         'comunicar sin demora al mando',                 // trampa: sinónimos
+         'pasar la novedad a la superioridad'], 0);       // trampa: similar
+
+    // ---------- completar (trampa textual) ----------
     addRaw('completar', 'Operaciones contraguerilla se conducen en terreno _______ (418).', 166, null, null, 'propio');
     addRaw('completar', 'Dos formas: control población y operaciones _______ de contraguerilla (419).', 167, null, null, 'tácticas');
     addRaw('completar', 'Factor medios incluye personal, fuego, movilidad y _______ (426).', 169, null, null, 'comunicaciones');
     addRaw('completar', 'Fuerzas especiales se infiltran por paracaídas o desembarcos _______ (431-D).', 171, null, null, 'marítimos');
-    addRaw('completar', 'Forey: “aguas _______” (435).', 174, null, null, 'corrompidas');
+    addRaw('completar', 'Forey: "aguas _______" (435).', 174, null, null, 'corrompidas');
     addRaw('completar', 'Fase II: dar a conocer _______ a la población (440).', 177, null, null, 'limitaciones');
     addRaw('completar', 'Medida de control común: _______ de queda (444).', 178, null, null, 'toque');
     addRaw('completar', 'Operaciones psicológicas buscan la _______ nacional (458-F).', 183, null, null, 'unión');
@@ -327,16 +466,16 @@
     addRaw('columna', 'Relacione concepto con párrafo:', 166, null, null, null, null,
         [['Operaciones contraguerilla', '418'], ['Factores tácticos', '422'], ['Fases control civil', '438'], ['Características tácticas', '453']]);
     addRaw('columna', 'Mida control con descripción (444):', 178, null, null, null, null,
-        [['Toque de queda', 'prohibición circular'], ['Racionamiento', 'víveres y medicinas'], ['Cateos', 'registros'], ['Salvoconductos', 'dispensas']]);
+        [['Toque de queda', 'prohibición circular'], ['Racionamiento', 'víveres y medicinas'], ['Cateos', 'registros domiciliarios'], ['Salvoconductos', 'dispensas']]);
     addRaw('columna', 'Tipo de fuerza con característica:', 170, null, null, null, null,
-        [['Unidades especiales', 'alto adiestramiento'], ['Fuerzas aisladas', 'armamento capturado'], ['Grupos traidores', 'asesorados'], ['Fuerzas blindadas', 'causar desorganización']]);
+        [['Unidades especiales', 'alto adiestramiento'], ['Fuerzas aisladas', 'armamento capturado'], ['Grupos traidores', 'asesorados por invasor'], ['Fuerzas blindadas', 'causar desorganización']]);
     addRaw('columna', 'Relacione fase con acción:', 176, null, null, null, null,
         [['Preparación', 'organizar comités'], ['Declaratoria', 'anunciar sanciones'], ['Ejecutoria', 'aplicar medidas']]);
     addRaw('columna', 'Vulnerabilidades guerrilla (424):', 168, null, null, null, null,
         [['apoyo externo', 'interdicción'], ['captura equipos', 'prevenir'], ['apoyo población', 'reducir con opsicol']]);
 
     // ----------------------------------------------------
-    // Construcción con mezcla real (opciones de mc reordenadas)
+    // Construcción con mezcla real (opciones reordenadas)
     // ----------------------------------------------------
     let preguntas = [];
 
