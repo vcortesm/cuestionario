@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario: Operaciones Conjuntas (Págs. 76-100)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #1e3c5c;
+            padding: 30px 15px;
+            color: #1e2e3b;
+        }
+        
+        .cuaderno {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fef9e7;
+            background-image: 
+                linear-gradient(#e8e0d0 1px, transparent 1px),
+                linear-gradient(90deg, #e8e0d0 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: -5px -5px;
+            border: 2px solid #b59d7a;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            padding: 35px 40px;
+            border-radius: 4px 20px 20px 4px;
+            position: relative;
+        }
+        
+        .cuaderno::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 2px;
+            height: 100%;
+            background: #dbbd9a;
+            box-shadow: 0 0 0 1px #c9aa7b;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            color: #2c1810;
+            text-shadow: 2px 2px 0 #c9b396;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 3px double #9b7e5c;
+            padding-bottom: 15px;
+        }
+        
+        .sub-header {
+            text-align: center;
+            font-style: italic;
+            color: #4d3e2e;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .pregunta {
+            background: rgba(250, 245, 235, 0.9);
+            border-left: 8px solid #8b6e4e;
+            padding: 20px 25px 20px 45px;
+            margin-bottom: 20px;
+            border-radius: 0 30px 10px 10px;
+            box-shadow: 3px 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.2s;
+            width: calc(100% - 20px);
+        }
+        
+        .pregunta:hover {
+            background: #fff9ef;
+            border-left-color: #c49a6c;
+        }
+        
+        .pregunta::before {
+            content: "✎";
+            position: absolute;
+            left: 10px;
+            top: 18px;
+            font-size: 1.8rem;
+            color: #b38b60;
+            opacity: 0.5;
+        }
+        
+        .num-pregunta {
+            font-weight: bold;
+            color: #5e3a22;
+            font-size: 1.3rem;
+            margin-right: 10px;
+            display: inline-block;
+            background: #dac09a;
+            padding: 0px 8px;
+            border-radius: 50%;
+        }
+        
+        .texto-pregunta {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #2f2a24;
+            margin-bottom: 18px;
+            font-weight: 500;
+            display: inline;
+        }
+        
+        .opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 12px;
+            margin-left: 20px;
+        }
+        
+        .opcion-item {
+            flex: 1 1 200px;
+            background: #fffcf4;
+            border: 1.5px solid #cdb699;
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+        
+        .opcion-item:hover {
+            background: #efe0cd;
+            border-color: #a4815a;
+        }
+        
+        .opcion-item input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #8b6e4e;
+            border-radius: 50%;
+            outline: none;
+            transition: 0.1s;
+            cursor: pointer;
+            background: white;
+        }
+        
+        .opcion-item input[type="radio"]:checked {
+            background: #6f4e2e;
+            border-color: #4a351e;
+            box-shadow: inset 0 0 0 4px white;
+        }
+        
+        .opcion-item label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #3a3126;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        
+        .opcion-item.correcta {
+            background: #c8f0c1;
+            border-color: #2d7a2d;
+            font-weight: bold;
+        }
+        
+        .opcion-item.incorrecta {
+            background: #f8d7da;
+            border-color: #b02a37;
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+        
+        .botones {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            margin: 40px 0 25px;
+        }
+        
+        .btn {
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-calificar {
+            background: #2b6f44;
+            border-color: #1f724b;
+            color: white;
+            box-shadow: 0 4px 0 #124d2d;
+        }
+        
+        .btn-calificar:hover {
+            background: #1f8a4f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #124d2d;
+        }
+        
+        .btn-borrar {
+            background: #aa4a3c;
+            border-color: #973f32;
+            color: white;
+            box-shadow: 0 4px 0 #672b21;
+        }
+        
+        .btn-borrar:hover {
+            background: #c45b4b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #672b21;
+        }
+        
+        .resultado {
+            background: #f7e4c5;
+            border: 3px solid #b48b54;
+            border-radius: 60px;
+            padding: 22px;
+            margin: 20px 0 10px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #273b2b;
+            display: none;
+            box-shadow: inset 0 2px 8px #c7a775;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 1rem;
+            color: #6b5c48;
+            margin-top: 25px;
+            font-style: italic;
+        }
+        
+        .advertencia {
+            background: #ffe8ce;
+            border-left: 5px solid #b7672c;
+            padding: 8px 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 0 20px 20px 0;
+            font-size: 0.95rem;
+            color: #492f18;
+        }
+    </style>
+</head>
+<body>
+    <div class="cuaderno">
+        <h1>📘 OPERACIONES CONJUNTAS (PÁGS. 76-100)</h1>
+        <div class="sub-header">Completa la oración con la palabra exacta del manual</div>
+        <div class="advertencia">
+            ⚠️ Basado en las páginas 76 a 100 del Manual de Operaciones Conjuntas. Opciones semánticamente similares.
+        </div>
+
+        <div id="contenedor-preguntas"></div>
+
+        <div class="botones">
+            <button class="btn btn-calificar" id="calificarBtn">✔ CALIFICAR</button>
+            <button class="btn btn-borrar" id="borrarBtn">✖ BORRAR TODO</button>
+        </div>
+
+        <div id="resultado" class="resultado"></div>
+        <div class="footer">Manual de Operaciones Conjuntas (Edición 2024)</div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 60 PREGUNTAS (PÁGINAS 76-100) ----------
+            const preguntas = [
+                { //1 (83)
+                    texto: "El párrafo 83 señala que en otros países, las Fuerzas Armadas se encuentran integradas bajo un solo ente, lo que facilita la integración de un esfuerzo conjunto y el establecimiento de un Estado Mayor de Operaciones ________.",
+                    opciones: ["Unificadas", "Conjuntas", "Coordinadas", "Integradas"],
+                    correcta: 1
+                },
+                { //2 (84)
+                    texto: "El Presidente de la República, como Mando Supremo, puede conjuntar las Fuerzas Armadas bajo un solo mando que conduzca la defensa nacional, nombrando a un Comandante de Operaciones ________.",
+                    opciones: ["Militares", "Conjuntas", "Estratégicas", "Tácticas"],
+                    correcta: 1
+                },
+                { //3 (85)
+                    texto: "Las tres Fuerzas Armadas desarrollan una doctrina ________ que se adapte a las misiones de seguridad y defensa de la patria.",
+                    opciones: ["común", "conjunta", "unificada", "coordinada"],
+                    correcta: 1
+                },
+                { //4 (87)
+                    texto: "El Libro de Planeamiento Operacional Conjunto señala que las Operaciones Conjuntas son la solución para enfrentar los retos actuales, aumentando las ventajas de una acción ________.",
+                    opciones: ["coordinada", "unificada", "conjunta", "integrada"],
+                    correcta: 0
+                },
+                { //5 (88)
+                    texto: "El Manual de Operaciones Militares señala que las Operaciones Conjuntas requieren un enfoque integral que permita alcanzar el máximo efecto ________ de la fuerza conjunta.",
+                    opciones: ["operacional", "táctico", "estratégico", "militar"],
+                    correcta: 0
+                },
+                { //6 (89)
+                    texto: "El Manual de Operaciones Aéreas Militares define las Operaciones Conjuntas como actividades realizadas por componentes del ejército, fuerza aérea y armada bajo el mando de un solo ________.",
+                    opciones: ["jefe", "comandante", "oficial", "líder"],
+                    correcta: 1
+                },
+                { //7 (90)
+                    texto: "Las Operaciones Conjuntas son acciones militares realizadas por una Fuerza Conjunta, organizada con componentes del Ejército, Fuerza Aérea y Armada, bajo la conducción de un mando ________.",
+                    opciones: ["centralizado", "unificado", "único", "superior"],
+                    correcta: 2
+                },
+                { //8 (90)
+                    texto: "Las Operaciones Conjuntas se realizan dentro de un Teatro de ________ para el logro de un objetivo conjunto de repercusión estratégica.",
+                    opciones: ["Guerra", "Operaciones", "Combate", "Conflicto"],
+                    correcta: 0
+                },
+                { //9 (91)
+                    texto: "Tradicionalmente las Operaciones Conjuntas se han conceptualizado como: aeroterrestre, aeronaval y ________.",
+                    opciones: ["anfibia", "combinada", "multidominio", "terrestre"],
+                    correcta: 0
+                },
+                { //10 (91)
+                    texto: "Las acciones que realicen los componentes constituyen Operaciones Conjuntas, las cuales se realizan en un ________ o Ritmo de Combate.",
+                    opciones: ["tiempo", "Tempo", "ritmo", "cronograma"],
+                    correcta: 1
+                },
+                { //11 (92)
+                    texto: "Las Operaciones Conjuntas se concretan en la Acción ________ que realiza el Comandante de la Fuerza Conjunta.",
+                    opciones: ["Conjunta", "Coordinada", "Unificada", "Combinada"],
+                    correcta: 0
+                },
+                { //12 (94)
+                    texto: "Uno de los principios de las Operaciones Conjuntas es la Unidad de ________.",
+                    opciones: ["mando", "dirección", "liderazgo", "comando"],
+                    correcta: 0
+                },
+                { //13 (94)
+                    texto: "El principio de ________ y economía de fuerzas consiste en aplicar el máximo de fuerza combativa en el punto crítico.",
+                    opciones: ["concentración", "acumulación", "reunión", "agrupación"],
+                    correcta: 0
+                },
+                { //14 (94)
+                    texto: "El principio de ________ consiste en preparar planes y órdenes concisas y ejecutar maniobras de forma simple.",
+                    opciones: ["sencillez", "simplicidad", "claridad", "transparencia"],
+                    correcta: 0
+                },
+                { //15 (95)
+                    texto: "El principio de Unidad de Mando consiste en asegurar la unidad de ________ bajo un Comandante responsable.",
+                    opciones: ["propósito", "dirección", "esfuerzo", "criterio"],
+                    correcta: 2
+                },
+                { //16 (95)
+                    texto: "La Unidad de Mando aporta la ________ necesaria para la planificación y ejecución de operaciones.",
+                    opciones: ["cohesión", "unión", "integración", "armonía"],
+                    correcta: 0
+                },
+                { //17 (96)
+                    texto: "El principio de Unidad de Objetivo establece que toda fuerza empleada debe contar con un objetivo de consecución factible y ________.",
+                    opciones: ["decisiva", "importante", "trascendente", "fundamental"],
+                    correcta: 0
+                },
+                { //18 (96)
+                    texto: "La ________ en la acción significa que debe crearse la posibilidad de llevar la acción hasta la consecución del objetivo final.",
+                    opciones: ["continuidad", "persistencia", "permanencia", "constancia"],
+                    correcta: 0
+                },
+                { //19 (97)
+                    texto: "La Acción ________ permite tomar la iniciativa, seleccionar los objetivos e imponer la voluntad sobre el adversario.",
+                    opciones: ["ofensiva", "agresiva", "combativa", "decidida"],
+                    correcta: 0
+                },
+                { //20 (98)
+                    texto: "La ________ de fuerzas consiste en dosificar y administrar adecuadamente las fuerzas disponibles.",
+                    opciones: ["economía", "administración", "gestión", "distribución"],
+                    correcta: 0
+                },
+                { //21 (99)
+                    texto: "La ________ es la combinación de esfuerzos en tiempo y espacio para colocar al enemigo en posición desventajosa.",
+                    opciones: ["maniobra", "operación", "táctica", "estrategia"],
+                    correcta: 0
+                },
+                { //22 (100)
+                    texto: "La aplicación del principio de ________ protege a los mandos y unidades de que el enemigo intervenga amenazando su libertad de acción.",
+                    opciones: ["seguridad", "protección", "defensa", "resguardo"],
+                    correcta: 0
+                },
+                { //23 (100)
+                    texto: "El propósito de la ________ es nunca permitir que el adversario adquiera una ventaja inesperada.",
+                    opciones: ["seguridad", "protección", "vigilancia", "custodia"],
+                    correcta: 0
+                },
+                { //24 (101)
+                    texto: "El principio de ________ consiste en actuar contra el enemigo en un lugar donde no esperaba ser atacado.",
+                    opciones: ["sorpresa", "sorpresividad", "imprevisto", "inesperado"],
+                    correcta: 0
+                },
+                { //25 (102)
+                    texto: "La ________ es una garantía de éxito parcial o total en las operaciones.",
+                    opciones: ["sorpresa", "iniciativa", "maniobra", "sencillez"],
+                    correcta: 0
+                },
+                { //26 (103)
+                    texto: "La ________ es responsabilidad de los mandos de todo nivel y consiste en articular en tiempo y espacio las acciones particulares.",
+                    opciones: ["coordinación", "organización", "planificación", "sincronización"],
+                    correcta: 0
+                },
+                { //27 (103)
+                    texto: "La ________ se manifiesta en forma de ayuda y colaboración recíprocas para la obtención de una finalidad común.",
+                    opciones: ["cooperación", "colaboración", "asistencia", "apoyo"],
+                    correcta: 0
+                },
+                { //28 (104)
+                    texto: "El principio de ________ consiste en que las unidades deben adaptarse a las diversas condiciones que impone la situación.",
+                    opciones: ["flexibilidad", "adaptabilidad", "versatilidad", "elasticidad"],
+                    correcta: 0
+                },
+                { //29 (105)
+                    texto: "El principio de ________ pretende limitar el daño colateral y prevenir el uso innecesario de la fuerza.",
+                    opciones: ["restricción", "limitación", "contención", "moderación"],
+                    correcta: 0
+                },
+                { //30 (106)
+                    texto: "La ________ implica la preparación para operaciones militares prolongadas en la búsqueda de los objetivos nacionales.",
+                    opciones: ["perseverancia", "persistencia", "constancia", "tenacidad"],
+                    correcta: 0
+                },
+                { //31 (107)
+                    texto: "El principio de ________ busca mantener la autoridad moral y legal en la conducción de las operaciones.",
+                    opciones: ["legitimidad", "legalidad", "justicia", "rectitud"],
+                    correcta: 0
+                },
+                { //32 (108)
+                    texto: "En la doctrina de la OTAN, los tipos de operaciones se clasifican en Combate y Respuesta a ________.",
+                    opciones: ["crisis", "conflictos", "emergencias", "contingencias"],
+                    correcta: 0
+                },
+                { //33 (110)
+                    texto: "Las operaciones de ________ pueden implicar combates de fuerzas convencionales de varias escalas entre Fuerzas Armadas opuestas.",
+                    opciones: ["combate", "guerra", "conflicto", "enfrentamiento"],
+                    correcta: 0
+                },
+                { //34 (111)
+                    texto: "Las operaciones de combate se caracterizan por una serie de batallas y un alto consumo ________.",
+                    opciones: ["logístico", "de recursos", "de material", "de abastecimientos"],
+                    correcta: 0
+                },
+                { //35 (113)
+                    texto: "Las operaciones de respuesta ante crisis contribuyen a la prevención y ________ de conflictos.",
+                    opciones: ["resolución", "solución", "terminación", "conclusión"],
+                    correcta: 0
+                },
+                { //36 (114)
+                    texto: "La actividad irregular es una categoría de métodos no ________ de violencia empleados para contrarrestar capacidades tradicionales.",
+                    opciones: ["convencionales", "tradicionales", "ortodoxos", "comunes"],
+                    correcta: 0
+                },
+                { //37 (114-A-a)
+                    texto: "El método ________ toma acciones para neutralizar una amenaza inminente mediante la neutralización de la red de actividades irregulares.",
+                    opciones: ["directo", "inmediato", "frontal", "expedito"],
+                    correcta: 0
+                },
+                { //38 (114-A-b)
+                    texto: "El método ________ intenta influir en el entorno operativo en el que operan actores irregulares.",
+                    opciones: ["indirecto", "mediato", "colateral", "subrepticio"],
+                    correcta: 0
+                },
+                { //39 (114-A-a-1)
+                    texto: "La ________ se define como esfuerzos civiles y militares para derrotar una insurrección.",
+                    opciones: ["contra-insurrección", "contrainsurgencia", "contrarevuelta", "contra-alzamiento"],
+                    correcta: 0
+                },
+                { //40 (114-A-a-2)
+                    texto: "El ________ son medidas preventivas, defensivas y ofensivas para reducir la vulnerabilidad a actos terroristas.",
+                    opciones: ["contraterrorismo", "antiterrorismo", "contra- terror", "lucha antiterrorista"],
+                    correcta: 0
+                },
+                { //41 (114-A-a-3)
+                    texto: "La ________ es la acción enfocada en prevenir que los grupos criminales organizados escalen sus actividades.",
+                    opciones: ["contra-criminalidad", "anticriminalidad", "lucha contra el crimen", "combate a la delincuencia"],
+                    correcta: 0
+                },
+                { //42 (114-B)
+                    texto: "La contribución militar al ________ de la paz puede hacer uso de medios diplomáticos, civiles y militares.",
+                    opciones: ["apoyo", "mantenimiento", "sostenimiento", "preservación"],
+                    correcta: 0
+                },
+                { //43 (114-C)
+                    texto: "La contribución militar a la asistencia ________ consiste en actividades para aliviar o reducir el sufrimiento humano.",
+                    opciones: ["humanitaria", "humanitaria", "de socorro", "de auxilio"],
+                    correcta: 0
+                },
+                { //44 (114-D)
+                    texto: "La Estabilización y Reconstrucción es un proceso liderado por ________ en estados que han perdido capacidad de gobernarse.",
+                    opciones: ["civiles", "civiles", "autoridades", "funcionarios"],
+                    correcta: 0
+                },
+                { //45 (114-E)
+                    texto: "Las operaciones de evacuación de no ________ son iniciativas diplomáticas nacionales con fuerzas en papel de apoyo.",
+                    opciones: ["combatientes", "combatientes", "beligerantes", "contendientes"],
+                    correcta: 0
+                },
+                { //46 (114-F)
+                    texto: "Las operaciones de libertad de navegación y ________ se llevan a cabo para demostrar derechos internacionales.",
+                    opciones: ["sobrevuelo", "sobrevuelo", "tránsito aéreo", "paso aéreo"],
+                    correcta: 0
+                },
+                { //47 (115)
+                    texto: "Las operaciones conjuntas deben tomar en cuenta el principio de no ________, garantizando que operen dentro del territorio nacional.",
+                    opciones: ["intervención", "intervención", "intromisión", "injerencia"],
+                    correcta: 0
+                },
+                { //48 (116)
+                    texto: "La preparación de operaciones conjuntas implica coordinación entre el Ejército, Fuerza Aérea y ________ de México.",
+                    opciones: ["Armada", "Marina", "Armada", "Fuerza Naval"],
+                    correcta: 0
+                },
+                { //49 (116)
+                    texto: "La preparación se complementa con la colaboración interinstitucional como parte de la integración ________.",
+                    opciones: ["militar-civil", "militar-civil", "cívico-militar", "civil-militar"],
+                    correcta: 0
+                },
+                { //50 (117)
+                    texto: "Las operaciones conjuntas deben realizarse con profesionalismo y respeto por los ________ humanos.",
+                    opciones: ["derechos", "derechos", "garantías", "principios"],
+                    correcta: 0
+                },
+                { //51 (118)
+                    texto: "El procedimiento de generación, activación y despliegue de fuerzas implica una planificación ________ para asegurar que las Fuerzas Armadas estén listas.",
+                    opciones: ["meticulosa", "detallada", "minuciosa", "exhaustiva"],
+                    correcta: 0
+                },
+                { //52 (119)
+                    texto: "La coordinación entre niveles de mando y el uso eficiente de capacidades ________ son esenciales para una respuesta rápida.",
+                    opciones: ["logísticas", "logísticas", "de apoyo", "de abastecimiento"],
+                    correcta: 0
+                },
+                { //53 (120)
+                    texto: "El Cuartel General de la Fuerza de Tarea Conjunta debe ser modular y ________.",
+                    opciones: ["flexible", "adaptable", "versátil", "elástico"],
+                    correcta: 0
+                },
+                { //54 (121)
+                    texto: "El Cuartel General debe integrar y coordinar las acciones de las Fuerzas Armadas y la ________ Nacional.",
+                    opciones: ["Guardia", "Guardia", "Gendarmería", "Policía"],
+                    correcta: 0
+                },
+                { //55 (123)
+                    texto: "La integración óptima de los componentes se logra cuando cada Mando de Componente comprende las intenciones y ________ de los otros.",
+                    opciones: ["capacidades", "capacidades", "posibilidades", "potencialidades"],
+                    correcta: 0
+                },
+                { //56 (124)
+                    texto: "La integración se facilita mediante redes de enlace y comunicaciones ________.",
+                    opciones: ["eficientes", "eficientes", "efectivas", "operativas"],
+                    correcta: 0
+                },
+                { //57 (126)
+                    texto: "El Mando del Componente Aéreo puede establecerse yuxtapuesto al Cuartel General de la Fuerza ________.",
+                    opciones: ["Conjunta", "Conjunta", "Unificada", "Combinada"],
+                    correcta: 0
+                },
+                { //58 (128)
+                    texto: "Cada Mando de Componente tendrá un oficial de ________ con autoridad para hacer recomendaciones.",
+                    opciones: ["enlace", "enlace", "ligazón", "comunicación"],
+                    correcta: 0
+                },
+                { //59 (129)
+                    texto: "La coordinación ________ es esencial, por lo que las operaciones militares deben coordinarse con otras agencias y autoridades civiles.",
+                    opciones: ["interinstitucional", "interinstitucional", "interagencial", "interorgánica"],
+                    correcta: 0
+                },
+                { //60 (130)
+                    texto: "Los desafíos de la integración incluyen la coordinación ________, el desempeño de actividades diferentes a la guerra y la activación de la movilización integral.",
+                    opciones: ["logística", "logística", "de apoyos", "de abastecimientos"],
+                    correcta: 0
+                }
+            ];
+
+            // Mezclar preguntas
+            function mezclarArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            const preguntasMezcladas = mezclarArray([...preguntas]);
+
+            // Renderizar
+            const contenedor = document.getElementById('contenedor-preguntas');
+            let html = '';
+            preguntasMezcladas.forEach((p, index) => {
+                html += `<div class="pregunta" id="p-${index}">`;
+                html += `<span class="num-pregunta">${index + 1}.</span> `;
+                html += `<span class="texto-pregunta">${p.texto}</span>`;
+                html += `<div class="opciones">`;
+
+                // Mezclar opciones para cada pregunta
+                const opcionesConIndice = p.opciones.map((texto, optIdx) => ({ texto, optIdx }));
+                const opcionesMezcladas = mezclarArray([...opcionesConIndice]);
+
+                opcionesMezcladas.forEach((opcion, optIndex) => {
+                    const radioId = `q${index}_opt${optIndex}`;
+                    html += `<div class="opcion-item" data-qidx="${index}" data-oidx="${opcion.optIdx}" data-correcta="${p.correcta}">`;
+                    html += `<input type="radio" name="q${index}" value="${opcion.optIdx}" id="${radioId}">`;
+                    html += `<label for="${radioId}">${String.fromCharCode(97 + optIndex)}) ${opcion.texto}</label>`;
+                    html += `</div>`;
+                });
+
+                html += `</div></div>`;
+            });
+            contenedor.innerHTML = html;
+
+            // Lógica de calificación
+            const calificarBtn = document.getElementById('calificarBtn');
+            const borrarBtn = document.getElementById('borrarBtn');
+            const resultadoDiv = document.getElementById('resultado');
+
+            function quitarClases() {
+                document.querySelectorAll('.opcion-item').forEach(item => {
+                    item.classList.remove('correcta', 'incorrecta');
+                });
+            }
+
+            function calificar() {
+                quitarClases();
+                let correctas = 0;
+                
+                for (let i = 0; i < preguntasMezcladas.length; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    let seleccion = null;
+                    let seleccionElement = null;
+                    
+                    for (let radio of radios) {
+                        if (radio.checked) {
+                            seleccion = radio.value;
+                            seleccionElement = radio.closest('.opcion-item');
+                            break;
+                        }
+                    }
+                    
+                    const correctaIndex = preguntasMezcladas[i].correcta;
+                    
+                    // Marcar opciones correctas
+                    document.querySelectorAll(`.opcion-item[data-qidx="${i}"]`).forEach(item => {
+                        if (parseInt(item.dataset.oidx) === correctaIndex) {
+                            item.classList.add('correcta');
+                        }
+                    });
+                    
+                    if (seleccion !== null) {
+                        if (parseInt(seleccion) === correctaIndex) {
+                            correctas++;
+                        } else if (seleccionElement) {
+                            seleccionElement.classList.add('incorrecta');
+                        }
+                    }
+                }
+                
+                resultadoDiv.style.display = 'block';
+                resultadoDiv.innerHTML = `✅ ACIERTOS: ${correctas} de ${preguntasMezcladas.length} (${Math.round((correctas / preguntasMezcladas.length) * 100)}%)`;
+            }
+
+            function borrarTodo() {
+                quitarClases();
+                for (let i = 0; i < preguntasMezcladas.length; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    for (let radio of radios) {
+                        radio.checked = false;
+                    }
+                }
+                resultadoDiv.style.display = 'none';
+            }
+
+            calificarBtn.addEventListener('click', calificar);
+            borrarBtn.addEventListener('click', borrarTodo);
+        })();
+    </script>
+</body>
+</html>
