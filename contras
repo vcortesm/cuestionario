@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario: Contraguerrilla Urbana (con realce)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #2b3e4f;
+            padding: 30px 15px;
+            color: #1e2e3b;
+        }
+        
+        .cuaderno {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fef9e7;
+            background-image: 
+                linear-gradient(#e8e0d0 1px, transparent 1px),
+                linear-gradient(90deg, #e8e0d0 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: -5px -5px;
+            border: 2px solid #b59d7a;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            padding: 35px 40px;
+            border-radius: 4px 20px 20px 4px;
+            position: relative;
+        }
+        
+        .cuaderno::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 2px;
+            height: 100%;
+            background: #dbbd9a;
+            box-shadow: 0 0 0 1px #c9aa7b;
+        }
+        
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            color: #2c1810;
+            text-shadow: 2px 2px 0 #c9b396;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 3px double #9b7e5c;
+            padding-bottom: 15px;
+        }
+        
+        .sub-header {
+            text-align: center;
+            font-style: italic;
+            color: #4d3e2e;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .pregunta {
+            background: rgba(250, 245, 235, 0.9);
+            border-left: 8px solid #8b6e4e;
+            padding: 20px 25px 20px 45px;
+            margin-bottom: 20px;
+            border-radius: 0 30px 10px 10px;
+            box-shadow: 3px 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.2s;
+            width: calc(100% - 20px);
+        }
+        
+        .pregunta:hover {
+            background: #fff9ef;
+            border-left-color: #c49a6c;
+        }
+        
+        .pregunta::before {
+            content: "✎";
+            position: absolute;
+            left: 10px;
+            top: 18px;
+            font-size: 1.8rem;
+            color: #b38b60;
+            opacity: 0.5;
+        }
+        
+        .num-pregunta {
+            font-weight: bold;
+            color: #5e3a22;
+            font-size: 1.3rem;
+            margin-right: 10px;
+            display: inline-block;
+            background: #dac09a;
+            padding: 0px 8px;
+            border-radius: 50%;
+        }
+        
+        .texto-pregunta {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: #2f2a24;
+            margin-bottom: 18px;
+            font-weight: 500;
+            display: inline;
+        }
+        
+        .opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 12px;
+            margin-left: 20px;
+        }
+        
+        .opcion-item {
+            flex: 1 1 200px;
+            background: #fffcf4;
+            border: 1.5px solid #cdb699;
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+        
+        .opcion-item:hover {
+            background: #efe0cd;
+            border-color: #a4815a;
+        }
+        
+        .opcion-item input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #8b6e4e;
+            border-radius: 50%;
+            outline: none;
+            transition: 0.1s;
+            cursor: pointer;
+            background: white;
+        }
+        
+        .opcion-item input[type="radio"]:checked {
+            background: #6f4e2e;
+            border-color: #4a351e;
+            box-shadow: inset 0 0 0 4px white;
+        }
+        
+        .opcion-item label {
+            cursor: pointer;
+            font-size: 1.05rem;
+            color: #3a3126;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        
+        /* Estilos para respuestas correctas/incorrectas después de calificar */
+        .opcion-item.correcta {
+            background: #c8f0c1;
+            border-color: #2d7a2d;
+            font-weight: bold;
+        }
+        
+        .opcion-item.incorrecta {
+            background: #f8d7da;
+            border-color: #b02a37;
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+        
+        .opcion-item.marcada-correcta {
+            background: #b8e0f5;
+            border-color: #1f5f8b;
+            font-weight: bold;
+        }
+        
+        .botones {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            margin: 40px 0 25px;
+        }
+        
+        .btn {
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-calificar {
+            background: #2b6f44;
+            border-color: #1f724b;
+            color: white;
+            box-shadow: 0 4px 0 #124d2d;
+        }
+        
+        .btn-calificar:hover {
+            background: #1f8a4f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #124d2d;
+        }
+        
+        .btn-borrar {
+            background: #aa4a3c;
+            border-color: #973f32;
+            color: white;
+            box-shadow: 0 4px 0 #672b21;
+        }
+        
+        .btn-borrar:hover {
+            background: #c45b4b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #672b21;
+        }
+        
+        .resultado {
+            background: #f7e4c5;
+            border: 3px solid #b48b54;
+            border-radius: 60px;
+            padding: 22px;
+            margin: 20px 0 10px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #273b2b;
+            display: none;
+            box-shadow: inset 0 2px 8px #c7a775;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 1rem;
+            color: #6b5c48;
+            margin-top: 25px;
+            font-style: italic;
+        }
+        
+        .advertencia {
+            background: #ffe8ce;
+            border-left: 5px solid #b7672c;
+            padding: 8px 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 0 20px 20px 0;
+            font-size: 0.95rem;
+            color: #492f18;
+        }
+    </style>
+</head>
+<body>
+    <div class="cuaderno">
+        <h1>📘 CONTRA GUERRILLA URBANA</h1>
+        <div class="sub-header">Completa la oración con la palabra exacta del manual</div>
+        <div class="advertencia">
+            ⚠️ Las opciones son deliberadamente similares. Al calificar, se marcará tu respuesta y se resaltará la correcta.
+        </div>
+
+        <div id="contenedor-preguntas"></div>
+
+        <div class="botones">
+            <button class="btn btn-calificar" id="calificarBtn">✔ CALIFICAR</button>
+            <button class="btn btn-borrar" id="borrarBtn">✖ BORRAR TODO</button>
+        </div>
+
+        <div id="resultado" class="resultado"></div>
+        <div class="footer">Basado en los manuales: Guerra irregular 1,2,3 y Adobe Scan</div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 50 PREGUNTAS DE COMPLETAR (OPCIONES MUY SIMILARES) ----------
+            const preguntas = [
+                { //1
+                    texto: "El párrafo 565 indica que las operaciones de contraguerrilla urbana comprenden dos formas interrelacionadas: operaciones para controlar a la población civil y operaciones ________ de contraguerrilla urbana.",
+                    opciones: ["tácticas", "estratégicas", "técnicas", "prácticas"],
+                    correcta: 0
+                },
+                { //2
+                    texto: "Según el párrafo 568, en áreas urbanas se considera necesario realizar un estudio de estas áreas con el fin de dividirlas por ________ en las que existan mayores similitudes que diferencias.",
+                    opciones: ["sectores", "regiones", "zonas", "distritos"],
+                    correcta: 2
+                },
+                { //3
+                    texto: "El párrafo 571 menciona que una de las medidas de control de población más comúnmente empleada en áreas urbanas es la reubicación y los ________.",
+                    opciones: ["toques de queda", "toques de silencio", "toques de atención", "toques de voz"],
+                    correcta: 0
+                },
+                { //4
+                    texto: "De acuerdo al párrafo 572, la reubicación de la población solo se hará por necesidades verdaderamente ________.",
+                    opciones: ["vitales", "estratégicas", "urgentes", "prioritarias"],
+                    correcta: 0
+                },
+                { //5
+                    texto: "El párrafo 573 señala que los toques de queda deben aplicarse en el área donde opera la guerrilla urbana enemiga y en donde exista la posibilidad de ________.",
+                    opciones: ["conflicto", "confrontación", "combate", "choque"],
+                    correcta: 0
+                },
+                { //6
+                    texto: "Según el párrafo 573 (inciso D), el toque de queda reduce el número de fuerzas de seguridad que se necesita desplegar en edificios vulnerables, lo que permite ________ las fuerzas.",
+                    opciones: ["concentrar", "reunir", "agrupar", "acumular"],
+                    correcta: 0
+                },
+                { //7
+                    texto: "El párrafo 573 (inciso E) establece que el toque de queda debe imponerse previa ________ a la población.",
+                    opciones: ["advertencia", "notificación", "información", "comunicación"],
+                    correcta: 0
+                },
+                { //8
+                    texto: "El párrafo 574 menciona como medida de control diurna la prohibición de reuniones, ________ o concentraciones.",
+                    opciones: ["mítines", "asambleas", "congresos", "protestas"],
+                    correcta: 0
+                },
+                { //9
+                    texto: "El párrafo 574 (inciso C) indica como medida las inspecciones sorpresivas de documentos de ________ en salidas de centros de trabajo o vía pública.",
+                    opciones: ["identificación", "identidad", "filiación", "personalidad"],
+                    correcta: 0
+                },
+                { //10
+                    texto: "El párrafo 575 advierte que las molestias ocasionadas a la población pueden desbordar los ánimos de ésta si quienes ejecutan las medidas no cuentan con el ________ y preparación adecuada.",
+                    opciones: ["adiestramiento", "entrenamiento", "capacitación", "instrucción"],
+                    correcta: 0
+                },
+                { //11
+                    texto: "El párrafo 576 destaca que el soldado es el principal ________ de las contraguerrillas y lo que ellas representan.",
+                    opciones: ["propagandista", "difusor", "promotor", "vocero"],
+                    correcta: 0
+                },
+                { //12
+                    texto: "El párrafo 577 menciona como acción fundamental la planificación detallada de la acción ________.",
+                    opciones: ["psicológica", "social", "política", "comunicacional"],
+                    correcta: 0
+                },
+                { //13
+                    texto: "Según el párrafo 578, la organización de la red de información debe ser hasta el nivel ________, pues permite un mayor control.",
+                    opciones: ["manzana", "cuadra", "colonia", "sector"],
+                    correcta: 0
+                },
+                { //14
+                    texto: "El párrafo 579 indica que los informantes por manzanas no deben conocerse entre sí para que vigilen e informen sobre cualquier actividad ________.",
+                    opciones: ["sospechosa", "extraña", "anormal", "irregular"],
+                    correcta: 0
+                },
+                { //15
+                    texto: "El párrafo 580 señala que las operaciones tácticas de contraguerrilla urbana dan prioridad al empleo de medios no militares para evitar dañar a la ________.",
+                    opciones: ["población civil", "población urbana", "sociedad civil", "comunidad civil"],
+                    correcta: 0
+                },
+                { //16
+                    texto: "La primera fase de las operaciones tácticas de contraguerrilla urbana (581) es la división ________ del área urbana.",
+                    opciones: ["territorial", "geográfica", "política", "administrativa"],
+                    correcta: 0
+                },
+                { //17
+                    texto: "El párrafo 584 denomina a una fase como '________ de la fuerza', que debe hacerse con cuidado para evitar esfuerzos excesivos o inactividad.",
+                    opciones: ["dosificación", "distribución", "asignación", "repartición"],
+                    correcta: 0
+                },
+                { //18
+                    texto: "Según el párrafo 585, las bases de operaciones deben establecerse en ________ que se encuentren dentro de la ciudad.",
+                    opciones: ["construcciones", "edificios", "inmuebles", "estructuras"],
+                    correcta: 0
+                },
+                { //19
+                    texto: "El párrafo 586-A considera que la fase de búsqueda y centralización de información es una de las más importantes, siempre que la información sea veraz, ________ y difundida.",
+                    opciones: ["oportuna", "rápida", "inmediata", "precisa"],
+                    correcta: 0
+                },
+                { //20
+                    texto: "El párrafo 586-B indica que para buscar información se deben emplear agentes secretos, agentes confidenciales, y ________ y órganos de información.",
+                    opciones: ["agencias", "oficinas", "departamentos", "secciones"],
+                    correcta: 0
+                },
+                { //21
+                    texto: "Las misiones de hostigamiento del párrafo 586-b incluyen reconocimientos, incursiones y ________.",
+                    opciones: ["emboscadas", "celadas", "trampas", "encerronas"],
+                    correcta: 0
+                },
+                { //22
+                    texto: "El párrafo 587 menciona como medida de seguridad los Procedimientos Sistemáticos de Operar (________) para que las contraguerillas se proporcionen seguridad.",
+                    opciones: ["P.S.O.", "P.S.O.", "PSO", "P.S.O"],
+                    correcta: 0
+                },
+                { //23
+                    texto: "La fase de localización del enemigo (588) se cumple cuando se tiene conocimiento verdadero y ________ de la ubicación de la guerrilla.",
+                    opciones: ["exacto", "preciso", "detallado", "completo"],
+                    correcta: 0
+                },
+                { //24
+                    texto: "Una vez localizada la guerrilla, el párrafo 589 indica que se debe mantener el contacto y de ser posible ________ en un solo lugar.",
+                    opciones: ["fijarla", "sujetarla", "detenerla", "retenerla"],
+                    correcta: 0
+                },
+                { //25
+                    texto: "Cuando una guerrilla ha sido localizada y fijada, se procederá a su ________ (590).",
+                    opciones: ["destrucción", "aniquilamiento", "eliminación", "neutralización"],
+                    correcta: 0
+                },
+                { //26
+                    texto: "La fuerza de reacción del párrafo 590-B debe estar constituida por unidades ________ con suficiente fuerza de combate.",
+                    opciones: ["móviles", "rápidas", "veloces", "ágiles"],
+                    correcta: 0
+                },
+                { //27
+                    texto: "Las operaciones tácticas de contraguerrilla urbana se clasifican (591) en ofensivas, de reacción y ________.",
+                    opciones: ["preventivas", "precautorias", "previsoras", "precavidas"],
+                    correcta: 0
+                },
+                { //28
+                    texto: "Las operaciones ofensivas (592) se caracterizan por el empleo de unidades militares con el propósito específico de destruir a las guerrillas urbanas ________.",
+                    opciones: ["enemigas", "adversarias", "contrarias", "opositoras"],
+                    correcta: 0
+                },
+                { //29
+                    texto: "En operaciones ofensivas (593), debido a la presencia de la población civil, no se podrá emplear todo el volumen y ________ de fuegos disponibles.",
+                    opciones: ["potencia", "poder", "capacidad", "intensidad"],
+                    correcta: 0
+                },
+                { //30
+                    texto: "El primer paso de una operación ofensiva (594-A) es ________ el área sospechosa con tropas y fuerzas de seguridad pública.",
+                    opciones: ["cercar", "rodear", "circundar", "bloquear"],
+                    correcta: 0
+                },
+                { //31
+                    texto: "Se debe informar a la población civil cercada (594-B) la hora en que será atacada el área, a menos que los guerrilleros entreguen sus ________ y se rindan.",
+                    opciones: ["armas", "fusiles", "armamento", "pertrechos"],
+                    correcta: 0
+                },
+                { //32
+                    texto: "En los puestos de revisión (594-C) se debe contar con personal capacitado para verificar los documentos oficiales de ________ y evitar falsificaciones.",
+                    opciones: ["identificación", "identidad", "filiación", "personalidad"],
+                    correcta: 0
+                },
+                { //33
+                    texto: "La prioridad para salir por los puestos de revisión (594-C-b) es: primero mujeres, niñas y niños; segundo ________ mayores de 50 años.",
+                    opciones: ["hombres", "varones", "caballeros", "personas"],
+                    correcta: 0
+                },
+                { //34
+                    texto: "El siguiente paso (594-D) es dividir el área cercada en ________ delimitados por calles específicas.",
+                    opciones: ["sectores", "segmentos", "fragmentos", "porciones"],
+                    correcta: 0
+                },
+                { //35
+                    texto: "Una vez evacuada la población civil, se procede a ________ al área cercada (594-E).",
+                    opciones: ["entrar", "ingresar", "penetrar", "introducirse"],
+                    correcta: 0
+                },
+                { //36
+                    texto: "Se recomienda el empleo de tiradores selectos y equipos de búsqueda auxiliados por ________ canófilos (594-E-b).",
+                    opciones: ["binomios", "parejas", "dúos", "equipos"],
+                    correcta: 0
+                },
+                { //37
+                    texto: "Se debe mantener estrecha vigilancia sobre túneles subterráneos de desagüe o del transporte subterráneo, ya que podrían ser utilizados como vías de ________.",
+                    opciones: ["escape", "huida", "fuga", "salida"],
+                    correcta: 0
+                },
+                { //38
+                    texto: "Las acciones dentro de los sectores (594-E-d) serán eminentemente ofensivas, empleando al máximo el fuego y ________.",
+                    opciones: ["movimiento", "desplazamiento", "maniobra", "avance"],
+                    correcta: 0
+                },
+                { //39
+                    texto: "Se debe dar prioridad a la ________ de personal guerrillero en lugar de eliminarlo, debido a la importancia de obtener información (594-E-f).",
+                    opciones: ["captura", "aprehensión", "detención", "apresamiento"],
+                    correcta: 0
+                },
+                { //40
+                    texto: "La búsqueda de ________ y estaciones de radio clandestinas debe ser uno de los objetivos de la operación (594-E-g).",
+                    opciones: ["depósitos", "almacenes", "bodegas", "arsenales"],
+                    correcta: 0
+                },
+                { //41
+                    texto: "El desconocimiento del lugar y hora de ataque por parte de las guerrillas obliga a mantener fuerzas de ________ altamente móviles (595).",
+                    opciones: ["reacción", "respuesta", "réplica", "contestación"],
+                    correcta: 0
+                },
+                { //42
+                    texto: "La ubicación de las fuerzas de reacción (596) se basará en el análisis de las posibilidades del enemigo y en la ________ de los probables objetivos.",
+                    opciones: ["retitubabilidad", "vulnerabilidad", "exposición", "fragilidad"],
+                    correcta: 0
+                },
+                { //43
+                    texto: "Las fuerzas de reacción terrestres (598) deben contar con equipo adecuado para eliminar ________.",
+                    opciones: ["barricadas", "obstáculos", "bloqueos", "barreras"],
+                    correcta: 0
+                },
+                { //44
+                    texto: "Las operaciones preventivas (599) tienen como finalidad reducir al máximo las ________ de las guerrillas para realizar cualquier acción exitosamente.",
+                    opciones: ["posibilidades", "capacidades", "oportunidades", "probabilidades"],
+                    correcta: 0
+                },
+                { //45
+                    texto: "La realización de operaciones preventivas (600) se debe coordinar y apoyar fundamentalmente en las medidas tomadas para el control de la población ________.",
+                    opciones: ["civil", "ciudadana", "urbana", "local"],
+                    correcta: 0
+                },
+                { //46
+                    texto: "El patrullaje preventivo (601) podrá ser terrestre o ________.",
+                    opciones: ["aéreo", "aerotransportado", "volante", "de vigilancia aérea"],
+                    correcta: 0
+                },
+                { //47
+                    texto: "Las medidas de reubicación dejarán zonas de la ciudad completamente deshabitadas, las cuales serán señaladas como zonas ________ (602).",
+                    opciones: ["prohibidas", "vedadas", "restringidas", "excluidas"],
+                    correcta: 0
+                },
+                { //48
+                    texto: "El párrafo 603 menciona que los ________ son una de las acciones más redituables para la guerrilla urbana enemiga.",
+                    opciones: ["secuestros", "plagios", "raptos", "capturas"],
+                    correcta: 0
+                },
+                { //49
+                    texto: "Los puestos de control y revisión (604-A) tienen por objeto exigir el cumplimiento de las medidas de control en las entradas, ________ y áreas específicas.",
+                    opciones: ["salidas", "egresos", "evacuaciones", "desalojos"],
+                    correcta: 0
+                },
+                { //50
+                    texto: "La intercepción de comunicaciones (605-A) se realiza mediante el empleo de ________ complementados con analistas de tráfico.",
+                    opciones: ["escuchas", "auditores", "vigías", "radioescuchas"],
+                    correcta: 0
+                }
+            ];
+
+            // Mezclar preguntas (orden aleatorio cada carga)
+            function mezclarArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            const preguntasMezcladas = mezclarArray([...preguntas]);
+
+            // Renderizar
+            const contenedor = document.getElementById('contenedor-preguntas');
+            let html = '';
+            preguntasMezcladas.forEach((p, index) => {
+                html += `<div class="pregunta" id="p-${index}">`;
+                html += `<span class="num-pregunta">${index + 1}.</span> `;
+                html += `<span class="texto-pregunta">${p.texto}</span>`;
+                html += `<div class="opciones">`;
+
+                // Mezclar opciones para cada pregunta
+                const opcionesConIndice = p.opciones.map((texto, optIdx) => ({ texto, optIdx }));
+                const opcionesMezcladas = mezclarArray([...opcionesConIndice]);
+
+                opcionesMezcladas.forEach((opcion, optIndex) => {
+                    const radioId = `q${index}_opt${optIndex}`;
+                    html += `<div class="opcion-item" data-qidx="${index}" data-oidx="${opcion.optIdx}" data-correcta="${p.correcta}">`;
+                    html += `<input type="radio" name="q${index}" value="${opcion.optIdx}" id="${radioId}">`;
+                    html += `<label for="${radioId}">${String.fromCharCode(97 + optIndex)}) ${opcion.texto}</label>`;
+                    html += `</div>`;
+                });
+
+                html += `</div></div>`;
+            });
+            contenedor.innerHTML = html;
+
+            // Lógica de calificación con realce
+            const calificarBtn = document.getElementById('calificarBtn');
+            const borrarBtn = document.getElementById('borrarBtn');
+            const resultadoDiv = document.getElementById('resultado');
+
+            function quitarClases() {
+                document.querySelectorAll('.opcion-item').forEach(item => {
+                    item.classList.remove('correcta', 'incorrecta', 'marcada-correcta');
+                });
+            }
+
+            function calificar() {
+                quitarClases();
+                let correctas = 0;
+                
+                for (let i = 0; i < preguntasMezcladas.length; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    let seleccion = null;
+                    let seleccionElement = null;
+                    
+                    // Encontrar la opción seleccionada y su valor
+                    for (let radio of radios) {
+                        if (radio.checked) {
+                            seleccion = radio.value;
+                            seleccionElement = radio.closest('.opcion-item');
+                            break;
+                        }
+                    }
+                    
+                    const correctaIndex = preguntasMezcladas[i].correcta;
+                    
+                    // Marcar TODAS las opciones correctas (suele haber una sola)
+                    document.querySelectorAll(`.opcion-item[data-qidx="${i}"]`).forEach(item => {
+                        if (parseInt(item.dataset.oidx) === correctaIndex) {
+                            item.classList.add('correcta');
+                        }
+                    });
+                    
+                    // Si hay selección
+                    if (seleccion !== null) {
+                        if (parseInt(seleccion) === correctaIndex) {
+                            correctas++;
+                        } else {
+                            // La opción incorrecta seleccionada se marca como incorrecta
+                            if (seleccionElement) {
+                                seleccionElement.classList.add('incorrecta');
+                            }
+                            // La correcta ya se marcó arriba con 'correcta'
+                        }
+                    } else {
+                        // No seleccionó nada: la correcta se marca igual para que la vea
+                        // (ya se marcó en el paso anterior)
+                    }
+                }
+                
+                resultadoDiv.style.display = 'block';
+                resultadoDiv.innerHTML = `✅ ACIERTOS: ${correctas} de ${preguntasMezcladas.length}  (${Math.round((correctas / preguntasMezcladas.length) * 100)}%)`;
+            }
+
+            function borrarTodo() {
+                quitarClases();
+                for (let i = 0; i < preguntasMezcladas.length; i++) {
+                    const radios = document.getElementsByName(`q${i}`);
+                    for (let radio of radios) {
+                        radio.checked = false;
+                    }
+                }
+                resultadoDiv.style.display = 'none';
+            }
+
+            calificarBtn.addEventListener('click', calificar);
+            borrarBtn.addEventListener('click', borrarTodo);
+        })();
+    </script>
+</body>
+</html>
