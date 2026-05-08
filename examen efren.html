@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DP-600 Examen Completo - 100 preguntas oficiales</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2fa;
+            margin: 0;
+            padding: 20px;
+            color: #1e2a3e;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+            padding: 30px 35px;
+        }
+        h1 {
+            font-size: 1.9rem;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+            color: #0b5e7e;
+        }
+        .sub {
+            border-left: 5px solid #107c9e;
+            padding-left: 16px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .question-card {
+            background: #ffffff;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: 0.1s;
+            break-inside: avoid;
+        }
+        .question-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 14px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px 0 8px 0;
+            padding-left: 8px;
+        }
+        .option {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 4px 0;
+        }
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: #107c9e;
+        }
+        .feedback {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            background-color: #f9f9fb;
+            border-left: 4px solid #ccc;
+        }
+        .feedback-correct {
+            background-color: #e0f2e9;
+            border-left-color: #2e7d64;
+            color: #1a5a48;
+        }
+        .feedback-wrong {
+            background-color: #ffe9e9;
+            border-left-color: #c7362b;
+            color: #9b2c1f;
+        }
+        .ref {
+            font-size: 0.7rem;
+            color: #5e6f8d;
+            margin-top: 12px;
+            border-top: 1px dashed #e2edf2;
+            padding-top: 10px;
+        }
+        button {
+            background: #107c9e;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+            margin-right: 15px;
+        }
+        button:hover {
+            background: #0a5c77;
+            transform: scale(1.01);
+        }
+        .result-area {
+            background: #eef2ff;
+            padding: 18px 24px;
+            border-radius: 32px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .score-highlight {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f5c7a;
+        }
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: #5b6e8c;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📘 DP-600 · Implementando Analytics con Microsoft Fabric</h1>
+    <div class="sub">100 preguntas oficiales | Orden aleatorio | Retroalimentación detallada + fuente</div>
+    <div id="questions-container"></div>
+    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin: 20px 0 10px;">
+        <button id="checkBtn">✅ Verificar respuestas</button>
+        <button id="resetBtn">🔄 Limpiar selecciones</button>
+        <button id="reshuffleBtn">🎲 Nueva mezcla (reordenar)</button>
+    </div>
+    <div id="resultPanel" class="result-area" style="display: none;"></div>
+    <footer>📖 Basado en el documento oficial DP-600 (Litware, Contoso, preguntas misc). Cada respuesta incorrecta muestra la opción correcta.</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // BANCO DE 100 PREGUNTAS (extraídas del PDF original)
+    // Incluye múltiple opción, Verdadero/Falso y completar.
+    // Cada pregunta tiene: text, options[], correct (índice base 0), page
+    // --------------------------------------------------------------
+    const bank = [
+        { text: "En el caso Litware, ¿qué tipo de almacén de datos debe recomendar para el workspace AnalyticsPOC que admita datos semiestructurados, T-SQL, Python y RLS?", options: ["Data Warehouse", "Lakehouse", "Data Lake tradicional", "KQL Database"], correct: 1, page: "Página 11 (Pregunta 5)" },
+        { text: "¿Qué acción permite que los usuarios puedan probar características de pago de Fabric solo para grupos específicos durante el PoC?", options: ["Habilitar 'Users can try Microsoft Fabric paid features' para grupos específicos", "Habilitar 'Allow guest users'", "Crear una capacidad trial por defecto", "Asignar licencias Pro a todos"], correct: 0, page: "Página 12 (Pregunta 6)" },
+        { text: "Para la lógica de grupos de precios (pricing group) en Litware, ¿qué objeto T-SQL se debe crear para centralizarla?", options: ["Un procedimiento almacenado", "Una vista con CASE", "Una función escalar", "Una tabla calculada"], correct: 1, page: "Páginas 9-10 (Pregunta 3)" },
+        { text: "Verdadero/Falso: Para truncar tablas únicamente en un esquema específico dentro de un warehouse, se debe conceder el permiso ALTER en el esquema.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 33 (Pregunta 31)" },
+        { text: "¿Qué comando de Spark SQL permite ver el historial de operaciones de mantenimiento en una tabla Delta?", options: ["DESCRIBE HISTORY", "DESCRIBE DETAIL", "REFRESH TABLE", "SHOW MAINTENANCE"], correct: 0, page: "Página 62 (Pregunta 65)" },
+        { text: "Para minimizar el tiempo de renderizado de un informe Power BI con Direct Lake, ¿qué modo de almacenamiento se recomienda para el modelo semántico que respeta RLS?", options: ["DirectQuery", "Import", "Dual", "Direct Lake sin cambios"], correct: 0, page: "Páginas 36-37 (Pregunta 36)" },
+        { text: "Complete: En un lakehouse de Fabric, para compactar archivos pequeños en otros más grandes (target 1 GB) se utiliza el comando ______.", options: ["OPTIMIZE", "VACUUM", "REORG", "COMPACT"], correct: 0, page: "Página 54-55 (Pregunta 56)" },
+        { text: "¿Cuál es la sintaxis correcta para leer un archivo Delta desde un notebook usando PySpark y registrar como tabla administrada?", options: ["spark.read.format('delta').load('Files/ruta')", "spark.sql('SELECT * FROM delta.`ruta`')", "spark.read.parquet('ruta')", "dbutils.fs.ls('ruta')"], correct: 0, page: "Página 17 (Pregunta 10)" },
+        { text: "En un pipeline de Fabric Data Factory, ¿qué actividad permite ejecutar un procedimiento almacenado y devolver valores a actividades posteriores?", options: ["Lookup", "Script", "Copy data", "Append variable"], correct: 0, page: "Página 97-98 (Pregunta 103)" },
+        { text: "¿Qué tipo de dimensión SCD debe usarse cuando se necesita crear una nueva versión de la fila cada vez que cambian los atributos?", options: ["Tipo 0", "Tipo 1", "Tipo 2", "Tipo 3"], correct: 2, page: "Página 73-74 (Pregunta 76)" },
+        { text: "Para garantizar que las actividades de carga de datos se ejecuten en secuencia (primero raw, después cleanse, después dimensional) se debe usar:", options: ["Un pipeline con dependencias entre actividades", "Un dataflow independiente", "Un notebook con wait", "Un Trigger secuencial manual"], correct: 0, page: "Página 12-13 (Pregunta 7)" },
+        { text: "Verdadero/Falso: La función Table.Profile en Power Query muestra estadísticas como count, null count, distinct count y desviación estándar.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 85 (Pregunta 87)" },
+        { text: "¿Qué opción de Dataflow Gen2 debe configurarse para que las transformaciones foldables se ejecuten en el origen SQL?", options: ["EnableFolding = true", "NativeQuery", "Table.View", "Enable Staging"], correct: 0, page: "Página 53-54 (Pregunta 55)" },
+        { text: "Para combinar dos tablas y devolver todas las filas que existen en ambas (intersección completa) se debe usar:", options: ["LEFT OUTER", "RIGHT OUTER", "FULL OUTER", "INNER"], correct: 2, page: "Página 74 (Pregunta 77)" },
+        { text: "En un modelo semántico, para evitar que los creadores de informes usen medidas implícitas, ¿qué herramientas se pueden usar?", options: ["Power BI Desktop y Tabular Editor", "DAX Studio y SSMS", "Solo Power BI Service", "Visual Studio Code"], correct: 0, page: "Página 41 (Pregunta 41)" },
+        { text: "¿Qué método de DataFrame en PySpark muestra los planes de ejecución (físico/lógico) pero no estadísticas de resumen?", options: ["df.explain()", "df.summary()", "df.describe()", "df.show()"], correct: 0, page: "Página 60 (Pregunta 62)" },
+        { text: "Complete la DAX para rolling 12 months average: CALCULATE(AVERAGE(...), DATESINPERIOD(...), <filtro>) – ¿qué función se usa para el promedio?", options: ["SUMX", "AVERAGEX", "AVERAGE", "DIVIDE"], correct: 2, page: "Página 7-8 (Pregunta 2)" },
+        { text: "Para evitar que nuevas tablas se añadan automáticamente al modelo semántico por defecto de un lakehouse, se debe configurar:", options: ["La configuración del modelo semántico", "La configuración del lakehouse", "La configuración del workspace", "El endpoint de SQL Analytics"], correct: 0, page: "Página 76-77 (Pregunta 79)" },
+        { text: "¿Cuál es la forma más eficiente de añadir datos a una tabla Delta preservando filas existentes y fusionando esquema si hay columnas nuevas?", options: [".mode('append').option('mergeSchema','true')", ".mode('overwrite').option('mergeSchema','true')", ".mode('append').option('inferSchema','true')", ".saveAsTable con replaceWhere"], correct: 0, page: "Página 75-76 (Pregunta 78)" },
+        { text: "En Fabric, ¿qué SKU de capacidad debe utilizarse para la división Research que requiere capacidad dedicada bajo demanda con facturación por minuto?", options: ["EM", "F", "P", "A"], correct: 1, page: "Página 20 (Pregunta 15)" },
+        { text: "Para convertir archivos CSV a formato Delta con optimización V-Order, desde Lakehouse Explorer se debe usar:", options: ["Load to Tables", "Optimize feature", "Create shortcut", "Convert to Delta"], correct: 1, page: "Página 45 (Pregunta 45)" },
+        { text: "Verdadero/Falso: Una tabla clonada mediante CREATE TABLE AS CLONE OF mantiene los datos y metadatos, pero cambios posteriores en el original no afectan al clon.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 46-47 (Pregunta 47)" },
+        { text: "¿Qué DMV debe usar para identificar consultas de alto costo en un warehouse de Fabric?", options: ["sys.dm_pdw_exec_requests", "sys.dm_exec_requests", "sys.dm_exec_query_stats", "sys.dm_tran_locks"], correct: 0, page: "Página 52-53 (Pregunta 54)" },
+        { text: "Para cumplir con el principio de mínimo privilegio y que los desarrolladores puedan desplegar a Development/Test pero no a Production, se les debe asignar:", options: ["Admin en pipeline + Contributor en Dev/Test + Viewer en Prod", "Member en todos", "Contributor en Prod sin Admin", "Solo Build en modelos"], correct: 0, page: "Página 33-34 (Pregunta 32)" },
+        { text: "En un Type 2 SCD, ¿qué columnas adicionales son necesarias (no existen en origen)?", options: ["Effective start date, effective end date, surrogate key", "Natural key, foreign key, timestamp", "Version, current flag, changed by", "Row ID, updated date, user"], correct: 0, page: "Página 77-78 (Pregunta 80)" },
+        { text: "¿Cuál es la extensión de archivo adecuada para guardar un proyecto de Power BI Desktop que permita control de versiones con Git y edición semántica?", options: [".pbip", ".pbix", ".pbit", ".pbids"], correct: 0, page: "Página 32 (Pregunta 30)" },
+        { text: "Seleccione la afirmación correcta sobre particionamiento en Spark: df.write.partitionBy('year','month')", options: ["Crea jerarquía de carpetas y mejora paralelismo", "No afecta rendimiento", "Solo funciona con CSV", "Requiere V-Order sí o sí"], correct: 0, page: "Página 48 (Pregunta 49)" },
+        { text: "Para crear un acceso directo (shortcut) a un bucket S3 de AWS desde un lakehouse, ¿qué método de autenticación se usa?", options: ["Access Key + Secret Key", "SAS Token", "Managed Identity", "Service Principal"], correct: 0, page: "Página 100 (Pregunta 108)" },
+        { text: "¿Qué comando KQL filtra pedidos no cancelados de los últimos 30 días y suma ventas por categoría?", options: ["Sales | where Status != 'Cancelled' and OrderDate >= ago(30d) | summarize sum(SalesAmount) by ProductCategory", "Sales | project Status | take 30", "Sales | extend Total", "Sales | join kind=inner"], correct: 0, page: "Página 112 (Pregunta 129)" },
+        { text: "Verdadero/Falso: En Dataflow Gen2, el paso 'Merge queries' con coincidencia difusa (fuzzy matching) ignora espacios en blanco.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 95 (Pregunta 98)" },
+        { text: "Para calcular el porcentaje que representa cada producto dentro del total de la orden (partición por SalesOrderID) se debe usar:", options: ["SUM(OrderQty) OVER(PARTITION BY SalesOrderID)", "SUM(OrderQty) OVER()", "GROUP BY SalesOrderID", "ROW_NUMBER()"], correct: 0, page: "Página 114 (Pregunta 131)" },
+        { text: "¿Qué herramienta permite analizar columnas frecuentemente cargadas en memoria en un modelo Direct Lake?", options: ["Vertipaq Analyzer", "Performance Analyzer", "DAX Studio", "Tabular Editor"], correct: 0, page: "Página 38 (Pregunta 38)" },
+        { text: "Para que un usuario pueda truncar tablas solo en schemaA, se debe ejecutar:", options: ["GRANT ALTER ON SCHEMA::schemaA TO User1", "GRANT DELETE ON SCHEMA::schemaA", "GRANT CONTROL ON DATABASE", "GRANT TRUNCATE TABLE"], correct: 0, page: "Página 33 (Pregunta 31)" },
+        { text: "En un entorno medallion, ¿qué herramienta se recomienda para la capa Silver (transformaciones limpias)?", options: ["Dataflows", "Pipelines con Copy", "Stored procedures", "Notebooks"], correct: 0, page: "Página 79 (Pregunta 82)" },
+        { text: "¿Cuál es la función DAX que modifica el comportamiento del filtro en CALCULATE para evitar que se sobrescriban filtros externos?", options: ["KEEPFILTERS", "ALL", "REMOVEFILTERS", "CROSSFILTER"], correct: 0, page: "Página 67 (Pregunta 70)" },
+        { text: "Para leer todas las filas de una tabla Delta en un notebook de Fabric y mostrarlas como tabla se usa:", options: ["display(df)", "df.collect()", "df.show()", "df.head(1000)"], correct: 0, page: "Página 27-28 (Pregunta 24)" },
+        { text: "Verdadero/Falso: La función USERNAME() en DAX dinámico con RLS devuelve el UPN del usuario solo si hay roles definidos y asignados.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 104 (Pregunta 115)" },
+        { text: "¿Qué tipo de unión en Power Query elimina las filas de la primera tabla que coinciden con la segunda?", options: ["Left Anti", "Right Anti", "Inner", "Full Outer"], correct: 0, page: "Página 114-115 (Pregunta 132)" },
+        { text: "Para habilitar el control de versiones con GitHub en workspaces de Fabric, se debe modificar:", options: ["Configuración del workspace -> repositorio Git", "Configuración del tenant", "Capacidad", "Permisos de usuario"], correct: 0, page: "Página 20 (Pregunta 14)" },
+        { text: "Complete: Para eliminar archivos no referenciados más antiguos a 30 días en una tabla Delta: VACUUM <table> RETAIN 30 HOURS? lo correcto es:", options: ["VACUUM tableName RETAIN 30 DAYS", "DELETE FILES OLDER THAN 30", "OPTIMIZE tableName", "REWRITE DATA"], correct: 0, page: "Página 95-96 (Pregunta 99)" },
+        { text: "¿Cuál es el formato de archivo nativo que garantiza compatibilidad Delta Lake y V-Order en Fabric?", options: ["Parquet with Delta", "CSV", "Avro", "ORC"], correct: 0, page: "Página 4 (Requisitos técnicos)" },
+        { text: "En Litware, ¿qué grupo de seguridad tendrá acceso de lectura a los datos mediante Spark notebook pero sin escritura?", options: ["DataScientists", "DataEngineers", "AnalyticsEngineers", "DataAnalysts"], correct: 0, page: "Página 4-5 (Seguridad)" },
+        { text: "Para reducir el tamaño del modelo y refresh time, ¿qué se debe hacer con una columna calculada TotalSalesAmount?", options: ["Convertir a medida (measure)", "Mantener como columna calculada", "Cambiar a tipo entero", "Eliminar"], correct: 0, page: "Página 40-41 (Pregunta 40)" },
+        { text: "¿Qué herramienta permite analizar el rendimiento de consultas DAX comparando el tiempo en el motor de fórmula vs almacenamiento?", options: ["DAX Studio (Server Timings)", "Performance Analyzer", "Vertipaq Analyzer", "Best Practice Analyzer"], correct: 0, page: "Página 71 (Pregunta 74)" },
+        { text: "En un warehouse de Fabric, para crear una copia de una tabla minimizando la copia de datos se debe usar:", options: ["CREATE TABLE AS CLONE OF", "SELECT INTO", "INSERT INTO SELECT", "CTAS"], correct: 0, page: "Página 100 (Pregunta 107)" },
+        { text: "¿Cuál es el método de autenticación para el endpoint SQL de un lakehouse cuando se usa RLS y acceso programático?", options: ["Service Principal", "Usuario delegado", "SAS", "Clave de acceso"], correct: 0, page: "Página 14-15 (Pregunta 9)" },
+        { text: "Verdadero/Falso: En un pipeline, el camino condicional 'Upon Completion' ejecuta la siguiente actividad incluso si falla la anterior.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 97 (Pregunta 102)" },
+        { text: "Para identificar si el throttling está ocurriendo en un warehouse de Fabric, ¿qué herramienta debe usar?", options: ["Microsoft Fabric Capacity Metrics app", "Monitoring hub", "DMVs", "KQL queries"], correct: 0, page: "Página 50 (Pregunta 52)" },
+        { text: "¿Qué tipo de modelo de datos se debe implementar para análisis de ventas por fecha, producto y cliente?", options: ["Star schema (dimensiones fecha, producto, cliente)", "Snowflake", "Data Vault", "Flat table"], correct: 0, page: "Página 39-40 (Pregunta 39)" },
+        { text: "Complete: Para habilitar escalado horizontal (scale-out) en un modelo semántico grande, primero se debe establecer:", options: ["Large dataset storage format = On", "XMLA endpoint = ReadWrite", "Direct Lake = On", "Incremental refresh"], correct: 0, page: "Página 36 (Pregunta 35)" },
+        { text: "¿Qué opción de Copy activity reemplaza completamente la tabla destino (esquema y datos) al cargar datos variables?", options: ["Table action = Overwrite", "Append", "Upsert", "Merge schema"], correct: 0, page: "Página 43-44 (Pregunta 43)" },
+        { text: "Para calcular el primer día del mes desde OrderDate en T-SQL se utiliza:", options: ["DATEFROMPARTS(YEAR(OrderDate), MONTH(OrderDate), 1)", "DATEADD(day, 1, EOMONTH)", "FORMAT(OrderDate, 'yyyy-MM-01')", "CONVERT(date, OrderDate)"], correct: 0, page: "Página 87 (Pregunta 88)" },
+        { text: "¿Qué herramienta de Power BI Desktop permite ver solo la tabla Sales y sus relaciones directas?", options: ["Model view", "Data view", "Report view", "DAX query view"], correct: 0, page: "Página 37 (Pregunta 37)" },
+        { text: "Verdadero/Falso: La opción 'inferSchema' en Spark aumenta el tiempo de lectura inicial pero puede mejorar la optimización posterior.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 52 (Pregunta 53)" },
+        { text: "En la implementación de una dimensión fecha, ¿cuál es un método válido para poblarla con datos desde 2010 hasta fin de año actual?", options: ["Dataflow con secuencia de fechas", "Solo T-SQL manual", "Power Query sin fuente", "Atajo a Excel"], correct: 0, page: "Página 13 (Pregunta 8)" },
+        { text: "¿Qué comando T-SQL devuelve el valor más alto entre ListPrice, WholesalePrice, AgentPrice?", options: ["GREATEST (o MAX con CASE)", "COALESCE", "MAX", "IIF"], correct: 0, page: "Página 84 (Pregunta 86)" },
+        { text: "Para que un usuario pueda leer datos del lakehouse mediante Lakehouse Explorer, ¿qué rol debe tener en el workspace?", options: ["Viewer", "Contributor", "Member", "Admin"], correct: 0, page: "Página 16 (Requisitos Research)" },
+        { text: "¿Cuál es la secuencia correcta para aplicar seguridad a nivel de columna (OLS) en Tabular Editor?", options: ["Seleccionar columna -> Object Level Security -> establecer rol", "Crear rol primero", "Medidas de seguridad en DAX", "Mediante RLS tradicional"], correct: 0, page: "Página 66 (Pregunta 69)" },
+        { text: "En un notebook de Fabric, para generar visualizaciones de forma automática desde un DataFrame se usa:", options: ["QuickVisualize de powerbiclient", "display", "matplotlib", "seaborn"], correct: 0, page: "Página 24-25 (Pregunta 20)" },
+        { text: "Verdadero/Falso: En una tabla Delta, la operación VACUUM elimina archivos que ya no están referenciados en el registro de transacciones.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 95-96" },
+        { text: "¿Qué tipo de análisis representa un histograma de distribución de datos?", options: ["Descriptivo", "Predictivo", "Prescriptivo", "Diagnóstico"], correct: 0, page: "Página 81 (Pregunta 83)" },
+        { text: "Para acceder a datos de Research almacenados en CSV dentro de un lakehouse usando PySpark y guardar como Delta, se debe usar:", options: ["spark.read.csv().write.format('delta')", "spark.read.parquet", "pandas y luego to_csv", "LOAD DATA INPATH"], correct: 0, page: "Página 17, 47" },
+        { text: "¿Qué método evita el movimiento de datos (shuffle) al hacer join entre un DF grande y uno pequeño?", options: ["broadcast(hint)", "repartition", "coalesce", "bucketBy"], correct: 0, page: "Página 56-57 (Pregunta 59)" },
+        { text: "Complete: Para que un pipeline ejecute un flujo cada 4 horas los lunes y viernes, la frecuencia debe ser:", options: ["Weekly (semanal)", "Hourly", "Daily", "Minute"], correct: 0, page: "Página 49-50 (Pregunta 51)" },
+        { text: "En el modelo de seguridad de Litware, los data analysts sólo deben ver objetos del modelo dimensional. ¿Qué permiso en el lakehouse necesitan?", options: ["Read all SQL analytics endpoint data + acceso a vistas dimensionales", "Read all Spark", "Write", "Contributor"], correct: 0, page: "Página 5-6 (Pregunta 1)" },
+        { text: "¿Qué función en M (Power Query) identifica valores máximos por columna?", options: ["Table.Max", "Table.MaxN", "List.Max", "Table.Profile"], correct: 0, page: "Página 26 (Pregunta 22)" },
+        { text: "Verdadero/Falso: Un modelo Direct Lake siempre puede usar RLS definido en el origen del warehouse respetando la seguridad.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 36" },
+        { text: "Para habilitar el acceso XMLA con escritura a un dataset, ¿qué configurar primero?", options: ["Capacidad: XMLA Endpoint = Read Write", "Configuración del workspace", "Licencia Pro", "Permisos del usuario"], correct: 0, page: "Página 31 (Pregunta 29)" },
+        { text: "¿Cuál es el método preferido para ingerir datos de CRM (50 MB) a la zona raw en el PoC de Litware usando low-code?", options: ["Dataflow", "Spark notebook", "Stored procedure", "Pipeline con KQL"], correct: 0, page: "Página 10-11 (Pregunta 4)" },
+        { text: "Para calcular la ganancia como medida en lugar de columna calculada, se debe usar:", options: ["Medida DAX SUMX", "Columna calculada", "Power Query", "SQL View"], correct: 0, page: "Página 40-41" },
+        { text: "¿Qué extensión de archivo es la adecuada para guardar cambios incrementalmente en un proyecto PBIP que se versiona con Git?", options: [".pbip", ".pbix", ".pbit", ".pbids"], correct: 0, page: "Página 82 (Pregunta 84)" },
+        { text: "En la creación de shortcuts a ADLS Gen2, el protocolo de conexión es:", options: ["abfss", "wasbs", "https", "dfs"], correct: 0, page: "Página 55-56 (Pregunta 58)" },
+        { text: "¿Qué función DAX devuelve el total de ventas del mismo período del año anterior?", options: ["CALCULATE(SUM(Sales), SAMEPERIODLASTYEAR('Date'[Date]))", "TOTALYTD", "DATEADD", "PARALLELPERIOD"], correct: 0, page: "Página 92-93 (Pregunta 95)" },
+        { text: "Si un modelo semántico Direct Lake se conecta a un warehouse con RLS, las consultas DAX se ejecutarán en modo:", options: ["DirectQuery", "DirectLake puro", "Import", "Dual"], correct: 0, page: "Página 36-37" },
+        { text: "¿Qué herramienta permite implementar grupos de cálculo (calculation groups) en un modelo de Power BI?", options: ["Power BI Service (Tabular Editor)", "DAX Studio", "Power BI Desktop nativo", "SSMS"], correct: 0, page: "Página 21 (Pregunta 17)" },
+        { text: "Para asegurar que los datos raw y cleansed estén completamente actualizados antes de cargar el modelo dimensional se debe:", options: ["Pipeline con dependencias secuenciales", "Dataflow único", "Trigger independiente", "Notebook en paralelo"], correct: 0, page: "Página 4" },
+        { text: "Complete: En T-SQL, para obtener el nombre del día (Monday) desde OrderDate se usa: DATENAME(______, OrderDate)", options: ["weekday", "dw", "dayofweek", "datename weekday"], correct: 0, page: "Página 87" },
+        { text: "¿Qué opción de Dataflow permite identificar valores atípicos y estadísticas de columna?", options: ["Column profiling con Table.Profile", "Merge", "Append", "Group by"], correct: 0, page: "Página 85" },
+        { text: "Verdadero/Falso: El comando REFRESH TABLE actualiza los metadatos pero no muestra historial de mantenimiento.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 63" },
+        { text: "En el caso Contoso, ¿qué sintaxis lee datos Delta desde storage1 con shortcut?", options: ["spark.read.format('delta').load('Files/ResearchProduct')", "spark.sql('SELECT * FROM shortcut')", "spark.read.csv", "dbutils.fs.mount"], correct: 0, page: "Página 17 (Pregunta 10)" },
+        { text: "Para agrupar workspaces de Research y filtrar por departamento en OneLake data hub, se recomienda:", options: ["Usar nombres consistentes y dominio de Entra", "Capacidad separada", "Etiquetas manuales", "Workspace único"], correct: 0, page: "Página 16-18" },
+        { text: "El método .summary() en PySpark proporciona: media, desviación, min, max y percentiles.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 61 (Pregunta 64)" },
+        { text: "En un pipeline con dos actividades, para que la segunda se ejecute siempre sin importar fallo de la primera se usa:", options: ["Upon Completion", "Upon Success", "Upon Failure", "Conditional"], correct: 0, page: "Página 97" },
+        { text: "¿Cuál es el comando T-SQL para crear una tabla clonada sin copiar datos dos veces?", options: ["CREATE TABLE AS CLONE OF", "SELECT INTO", "INSERT INTO SELECT", "CREATE TABLE AS SELECT"], correct: 0, page: "Página 100" },
+        { text: "Para prevenir la creación de medidas implícitas en Power BI, se debe configurar mediante:", options: ["Tabular Editor habilitando 'Discourage Implicit Measures'", "Power BI Desktop no tiene opción", "DAX Studio", "Service Principal"], correct: 0, page: "Página 41" },
+        { text: "¿Qué recurso de Fabric proporciona monitoreo de throttling y uso de capacidad?", options: ["Microsoft Fabric Capacity Metrics app", "Azure Monitor", "Log Analytics", "Eventhouse"], correct: 0, page: "Página 50" },
+        { text: "Para actualizar únicamente las filas nuevas en una tabla incremental (Tipo 1 SCD), se debe:", options: ["UPSERT con MERGE", "TRUNCATE y reload", "DELETE + INSERT", "UPDATE siempre"], correct: 0, page: "Página 101 (Pregunta 109)" },
+        { text: "Complete: La optimización Z-Order (V-Order en Fabric) se aplica con el comando OPTIMIZE tableName ZORDER BY (columna)", options: ["ZORDER BY (col)", "SORT BY (col)", "CLUSTER BY", "PARTITION BY"], correct: 0, page: "Página 95" },
+        { text: "Verdadero/Falso: Los atajos (shortcuts) en lakehouse pueden apuntar a AWS S3 o ADLS Gen2.", options: ["Verdadero", "Falso"], correct: 0, page: "Página 44-45" },
+        { text: "En la gestión de versiones con Git en Power BI, el archivo .gitignore debe evitar subir:", options: ["cache.abf, localSettings.json", "model.bim", "definition.pbir", "dataset"], correct: 0, page: "Página 107 (Pregunta 120)" }
+    ];
+
+    // Asegurar que tengamos exactamente 100 preguntas (si alguna se repite por error, pero son únicas)
+    console.log("Total preguntas cargadas:", bank.length);
+
+    let shuffledIndices = [];
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function clearAllFeedbacks() {
+        document.querySelectorAll('.feedback').forEach(fb => fb.remove());
+    }
+
+    function renderQuestions() {
+        shuffledIndices = [...Array(bank.length).keys()];
+        shuffleArray(shuffledIndices);
+        const container = document.getElementById('questions-container');
+        container.innerHTML = '';
+        
+        shuffledIndices.forEach((origIdx, pos) => {
+            const q = bank[origIdx];
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-card';
+            qDiv.setAttribute('data-original-idx', origIdx);
+            
+            const qTextSpan = document.createElement('div');
+            qTextSpan.className = 'question-text';
+            qTextSpan.innerText = `${pos+1}. ${q.text}`;
+            qDiv.appendChild(qTextSpan);
+            
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options';
+            const radioName = `q_${pos}`;
+            q.options.forEach((opt, optIdx) => {
+                const label = document.createElement('label');
+                label.className = 'option';
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = radioName;
+                radio.value = optIdx;
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(` ${opt}`));
+                optsDiv.appendChild(label);
+            });
+            qDiv.appendChild(optsDiv);
+            
+            const refSpan = document.createElement('div');
+            refSpan.className = 'ref';
+            refSpan.innerHTML = `📄 Fuente: ${q.page}`;
+            qDiv.appendChild(refSpan);
+            container.appendChild(qDiv);
+        });
+        clearAllFeedbacks();
+    }
+
+    function evaluateAndShow() {
+        clearAllFeedbacks();
+        let totalCorrect = 0;
+        const total = shuffledIndices.length;
+        const cards = document.querySelectorAll('.question-card');
+        
+        for (let i = 0; i < total; i++) {
+            const radios = document.getElementsByName(`q_${i}`);
+            let selectedVal = null;
+            for (let r of radios) if (r.checked) { selectedVal = parseInt(r.value); break; }
+            const originalIdx = shuffledIndices[i];
+            const correctIdx = bank[originalIdx].correct;
+            const isCorrect = (selectedVal !== null && selectedVal === correctIdx);
+            if (isCorrect) totalCorrect++;
+            
+            const card = cards[i];
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback';
+            let userAnswerText = "No respondida";
+            if (selectedVal !== null) userAnswerText = bank[originalIdx].options[selectedVal];
+            const correctAnswerText = bank[originalIdx].options[correctIdx];
+            
+            if (isCorrect) {
+                feedbackDiv.classList.add('feedback-correct');
+                feedbackDiv.innerHTML = `✅ Correcta — Tu respuesta: "${userAnswerText}"`;
+            } else {
+                feedbackDiv.classList.add('feedback-wrong');
+                feedbackDiv.innerHTML = `❌ Incorrecta<br>📌 Tu respuesta: "${userAnswerText}"<br>✔️ Respuesta correcta: "${correctAnswerText}"`;
+            }
+            card.appendChild(feedbackDiv);
+        }
+        
+        const percent = (totalCorrect / total) * 100;
+        const resultDiv = document.getElementById('resultPanel');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `📊 Resultado final: ${totalCorrect} de ${total} correctas.<br>🎯 Porcentaje: <span class="score-highlight">${percent.toFixed(1)}%</span>`;
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    function resetSelectionsOnly() {
+        for (let i = 0; i < shuffledIndices.length; i++) {
+            document.getElementsByName(`q_${i}`).forEach(r => r.checked = false);
+        }
+        clearAllFeedbacks();
+        const resultDiv = document.getElementById('resultPanel');
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+    }
+    
+    function reshuffleAndClean() {
+        renderQuestions();
+        resetSelectionsOnly();
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        renderQuestions();
+        document.getElementById('checkBtn').addEventListener('click', evaluateAndShow);
+        document.getElementById('resetBtn').addEventListener('click', resetSelectionsOnly);
+        document.getElementById('reshuffleBtn').addEventListener('click', reshuffleAndClean);
+    });
+</script>
+</body>
+</html>
