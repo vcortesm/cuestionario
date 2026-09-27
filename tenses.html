@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grammar Quiz - 50 Random Questions + Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 750px;
+    width: 100%;
+    padding: 30px;
+    margin-top: 20px;
+  }
+  h1 { text-align: center; color: #4a3f8f; font-size: 1.6rem; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 15px; }
+  .mode-badge {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #764ba2;
+    background: #f0eaff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 0 auto 15px;
+    width: fit-content;
+  }
+  .mode-badge-wrapper { text-align: center; margin-bottom: 15px; }
+  .top-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .action-btn {
+    background: #fff;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 8px 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .action-btn:hover { background: #667eea; color: #fff; }
+  .action-btn.danger { color: #dc3545; border-color: #dc3545; }
+  .action-btn.danger:hover { background: #dc3545; color: #fff; }
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .action-btn:disabled:hover { background: #fff; color: #667eea; }
+  .progress-bar {
+    width: 100%; height: 8px; background: #eee;
+    border-radius: 10px; overflow: hidden; margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    width: 0%; transition: width 0.4s ease;
+  }
+  .progress-text {
+    text-align: center; font-size: 0.85rem;
+    color: #667eea; font-weight: 600; margin-bottom: 20px;
+  }
+  .question-card {
+    background: #f8f9ff; border-radius: 15px;
+    padding: 22px; margin-bottom: 18px;
+    border-left: 5px solid #667eea;
+    animation: fadeIn 0.3s ease;
+  }
+  .question-card.review { border-left-color: #ff9800; background: #fff8ee; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .question-label {
+    display: inline-block; background: #667eea; color: #fff;
+    font-size: 0.65rem; padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 10px; text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 600;
+  }
+  .question-card.review .question-label { background: #ff9800; }
+  .question-text {
+    font-size: 1.05rem; color: #333;
+    margin-bottom: 15px; line-height: 1.5; font-weight: 600;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: #fff;
+    border: 2px solid #e0e0f0; border-radius: 10px;
+    cursor: pointer; transition: all 0.2s ease; font-size: 0.95rem;
+  }
+  .option:hover { border-color: #667eea; background: #f0f2ff; }
+  .option input { accent-color: #667eea; width: 17px; height: 17px; cursor: pointer; }
+  .option.correct { border-color: #28a745; background: #e8f8ec; }
+  .option.incorrect { border-color: #dc3545; background: #fdeaea; }
+  .feedback {
+    margin-top: 12px; padding: 10px 14px;
+    border-radius: 10px; font-size: 0.9rem;
+    display: none; line-height: 1.4;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback.correct { background: #e8f8ec; color: #1e7e34; border-left: 4px solid #28a745; }
+  .feedback.incorrect { background: #fdeaea; color: #b02a37; border-left: 4px solid #dc3545; }
+  .check-btn {
+    margin-top: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border: none; padding: 9px 22px;
+    border-radius: 25px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .check-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+  .check-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .audio-btn {
+    background: #764ba2; color: #fff; border: none;
+    padding: 11px 18px; border-radius: 30px;
+    cursor: pointer; font-size: 0.95rem; margin-bottom: 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.2s;
+  }
+  .audio-btn:hover { background: #5d3a82; }
+  .audio-btn.playing { animation: pulse 1s infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(118,75,162,0.5); }
+    50% { box-shadow: 0 0 0 12px rgba(118,75,162,0); }
+  }
+  .score-box {
+    text-align: center; padding: 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border-radius: 15px;
+    margin-top: 20px; display: none;
+  }
+  .score-box h2 { font-size: 1.3rem; margin-bottom: 8px; }
+  .score-box .score { font-size: 2.5rem; font-weight: bold; }
+  .score-box .pct { font-size: 1rem; margin-top: 6px; opacity: 0.9; }
+  .score-box .failed-info {
+    margin-top: 12px; font-size: 0.9rem;
+    background: rgba(255,255,255,0.15);
+    padding: 10px; border-radius: 10px;
+  }
+  .reset-btn {
+    margin-top: 15px; background: #fff; color: #667eea;
+    border: none; padding: 11px 28px; border-radius: 25px;
+    cursor: pointer; font-weight: 600; font-size: 0.95rem;
+    margin-right: 8px;
+  }
+  .reset-btn:hover { background: #f0f2ff; }
+  .reset-btn.orange { background: #ff9800; color: #fff; }
+  .reset-btn.orange:hover { background: #e68900; }
+  .fill-input {
+    width: 100%; padding: 11px 14px;
+    border: 2px solid #e0e0f0; border-radius: 10px;
+    font-size: 0.95rem; outline: none; transition: border 0.2s;
+  }
+  .fill-input:focus { border-color: #667eea; }
+  .fill-input.correct { border-color: #28a745; background: #e8f8ec; }
+  .fill-input.incorrect { border-color: #dc3545; background: #fdeaea; }
+  .hint {
+    font-size: 0.8rem; color: #888;
+    margin-top: -8px; margin-bottom: 10px; font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎓 Grammar Quiz</h1>
+  <p class="subtitle">Present Perfect · Past Simple · Present Perfect Continuous · just/yet/already</p>
+  <div class="mode-badge-wrapper"><span class="mode-badge" id="modeBadge">📝 Modo: 50 preguntas aleatorias</span></div>
+
+  <div class="top-actions">
+    <button class="action-btn" id="reviewBtn" onclick="startReviewMode()" disabled>🔁 Repasar falladas (<span id="failedCount">0</span>)</button>
+    <button class="action-btn danger" onclick="clearFailed()">🗑️ Borrar historial</button>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="progress-text" id="progressText">0 / 50 respondidas</div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="score-box" id="scoreBox">
+    <h2>🎉 ¡Cuestionario completado!</h2>
+    <div class="score" id="finalScore">0 / 50</div>
+    <div class="pct" id="finalPct"></div>
+    <div class="failed-info" id="failedInfo" style="display:none;"></div>
+    <button class="reset-btn" onclick="location.reload()">🔄 Nuevas 50 preguntas</button>
+    <button class="reset-btn orange" id="reviewBtn2" onclick="startReviewMode()" style="display:none;">🔁 Repasar falladas</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// BANCO DE PREGUNTAS (300+ con just/yet/already integrados)
+// ============================================================
+const QUESTION_BANK = [
+  // ---- OPCIÓN MÚLTIPLE (MC) ----
+  {type:"mc", q:"I ______ in this city ______ 2015.", opts:["have lived / for","have lived / since","lived / since","am living / for"], ans:1},
+  {type:"mc", q:"She ______ here ______ three years.", opts:["has worked / since","has worked / for","worked / for","works / since"], ans:1},
+  {type:"mc", q:"They ______ married ______ 2010.", opts:["have been / for","have been / since","were / since","are / for"], ans:1},
+  {type:"mc", q:"I ______ my keys. I can't find them.", opts:["have lost","lost","have been losing","am losing"], ans:0},
+  {type:"mc", q:"We ______ to Paris last summer.", opts:["have gone","went","have been going","go"], ans:1},
+  {type:"mc", q:"He ______ TV for two hours.", opts:["has watched","has been watching","watched","is watching"], ans:1},
+  {type:"mc", q:"I ______ that movie three times.", opts:["have seen","saw","have been seeing","see"], ans:0},
+  {type:"mc", q:"It ______ since this morning.", opts:["has rained","has been raining","rained","rains"], ans:1},
+  {type:"mc", q:"She ______ in London for five years before moving to Madrid.", opts:["has lived","lived","has been living","lives"], ans:1},
+  {type:"mc", q:"I ______ for this company since 2018.", opts:["work","worked","have worked","have been worked"], ans:2},
+  {type:"mc", q:"______ you ever ______ to Japan?", opts:["Did / go","Have / been","Have / gone","Do / go"], ans:1},
+  {type:"mc", q:"How long ______ you ______ English?", opts:["did / study","have / been studying","are / studying","do / study"], ans:1},
+  {type:"mc", q:"They ______ each other since childhood.", opts:["know","knew","have known","have been knowing"], ans:2},
+  {type:"mc", q:"I ______ my homework already.", opts:["finished","have finished","have been finishing","finish"], ans:1},
+  {type:"mc", q:"She ______ a shower when the phone rang.", opts:["had","was having","has had","has been having"], ans:1},
+  {type:"mc", q:"I ______ him yesterday at the party.", opts:["have seen","saw","have been seeing","see"], ans:1},
+  {type:"mc", q:"My sister ______ the violin since she was six.", opts:["plays","played","has played","has been played"], ans:2},
+  {type:"mc", q:"It's the first time I ______ sushi.", opts:["try","tried","have tried","am trying"], ans:2},
+  {type:"mc", q:"We ______ for the bus for 20 minutes.", opts:["wait","waited","have been waiting","have waited"], ans:2},
+  {type:"mc", q:"I ______ him since Monday.", opts:["haven't seen","didn't see","don't see","wasn't seeing"], ans:0},
+  {type:"mc", q:"She ______ in the sun for too long and got burnt.", opts:["has lain","lay","has been lying","lies"], ans:2},
+  {type:"mc", q:"How many times ______ you ______ that song?", opts:["did / play","have / played","have / been playing","do / play"], ans:1},
+  {type:"mc", q:"They ______ in the same house for 20 years.", opts:["live","lived","have lived","have been lived"], ans:2},
+  {type:"mc", q:"When ______ you ______ this book?", opts:["have / bought","did / buy","have / been buying","do / buy"], ans:1},
+  {type:"mc", q:"I ______ three cups of coffee today.", opts:["drank","have drunk","have been drinking","drink"], ans:1},
+  {type:"mc", q:"He ______ all morning. He must be tired.", opts:["worked","has worked","has been working","works"], ans:2},
+  {type:"mc", q:"______ she ______ her homework yet?", opts:["Did / finish","Has / finished","Has / been finishing","Does / finish"], ans:1},
+  {type:"mc", q:"I ______ this book for two weeks.", opts:["read","have read","have been reading","am reading"], ans:2},
+  {type:"mc", q:"They ______ just ______ the news.", opts:["have / heard","did / hear","have / been hearing","are / hearing"], ans:0},
+  {type:"mc", q:"We ______ friends since high school.", opts:["are","were","have been","have been being"], ans:2},
+  {type:"mc", q:"She ______ her arm last week.", opts:["has broken","broke","has been breaking","breaks"], ans:1},
+  {type:"mc", q:"I ______ never ______ to New York.", opts:["have / been","did / go","have / gone","am / going"], ans:0},
+  {type:"mc", q:"He ______ for the exam all night.", opts:["studied","has studied","has been studying","studies"], ans:2},
+  {type:"mc", q:"The children ______ in the garden for an hour.", opts:["play","played","have been playing","have played"], ans:2},
+  {type:"mc", q:"I ______ the report before the meeting started.", opts:["have finished","finished","have been finishing","finish"], ans:1},
+  {type:"mc", q:"She ______ tired since this morning.", opts:["is","was","has been","has been being"], ans:2},
+  {type:"mc", q:"______ you ______ your phone?", opts:["Did / find","Have / found","Have / been finding","Do / find"], ans:1},
+  {type:"mc", q:"They ______ three goals so far.", opts:["scored","have scored","have been scoring","score"], ans:1},
+  {type:"mc", q:"I ______ to call you yesterday, but I forgot.", opts:["have meant","meant","have been meaning","mean"], ans:1},
+  {type:"mc", q:"It's the best film I ______ ever ______.", opts:["have / seen","did / see","have / been seeing","was / seeing"], ans:0},
+  {type:"mc", q:"She ______ when I arrived.", opts:["cooked","was cooking","has cooked","has been cooking"], ans:1},
+  {type:"mc", q:"We ______ each other for a long time.", opts:["don't see","didn't see","haven't seen","haven't been seeing"], ans:2},
+  {type:"mc", q:"I ______ my car last month.", opts:["have sold","sold","have been selling","sell"], ans:1},
+  {type:"mc", q:"He ______ the same job for ten years.", opts:["does","did","has done","has been done"], ans:2},
+  {type:"mc", q:"The baby ______ all night.", opts:["cried","has cried","has been crying","cries"], ans:2},
+  {type:"mc", q:"I ______ you three times today!", opts:["called","have called","have been calling","call"], ans:1},
+  {type:"mc", q:"She ______ to the gym every day this week.", opts:["went","has gone","has been going","goes"], ans:2},
+  {type:"mc", q:"We ______ this restaurant before.", opts:["haven't tried","didn't try","don't try","weren't trying"], ans:0},
+  {type:"mc", q:"He ______ his leg while playing football.", opts:["has broken","broke","has been breaking","breaks"], ans:1},
+  {type:"mc", q:"I ______ for you since 8 AM!", opts:["wait","waited","have been waiting","have waited"], ans:2},
+
+  // ---- JUST / YET / ALREADY (MC) ----
+  {type:"mc", q:"I ______ just ______ my homework.", opts:["have / finished","has / finished","did / finish","am / finishing"], ans:0},
+  {type:"mc", q:"She ______ already ______ the email.", opts:["has / sent","have / sent","did / send","is / sending"], ans:0},
+  {type:"mc", q:"They ______ arrived ______. (Hace un momento)", opts:["have / just","just / have","has / just","just / has"], ans:0},
+  {type:"mc", q:"______ you finished ______?", opts:["Have / yet","Did / already","Have / already","Do / yet"], ans:0},
+  {type:"mc", q:"I ______ already ______ that movie.", opts:["have / seen","has / seen","did / see","am / seeing"], ans:0},
+  {type:"mc", q:"He ______ just ______ the door.", opts:["has / closed","have / closed","did / close","is / closing"], ans:0},
+  {type:"mc", q:"We ______ ______ eaten. (Ya comimos)", opts:["have / already","already / have","has / already","already / has"], ans:0},
+  {type:"mc", q:"She ______ ______ called me back.", opts:["hasn't / yet","didn't / already","hasn't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"I ______ ______ seen that film.", opts:["have / already","already / have","has / already","have / yet"], ans:0},
+  {type:"mc", q:"______ she ______ her homework?", opts:["Has / finished yet","Did / finish yet","Has / already finish","Have / finished yet"], ans:0},
+  {type:"mc", q:"They ______ just ______ to the airport.", opts:["have / gone","has / gone","did / go","are / going"], ans:0},
+  {type:"mc", q:"I ______ ______ finished the report. (Todavía no)", opts:["haven't / yet","didn't / already","haven't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"He ______ already ______ his lunch.", opts:["has / eaten","have / eaten","did / eat","is / eating"], ans:0},
+  {type:"mc", q:"______ you ______ been to Rome?", opts:["Have / ever","Did / ever","Have / already","Do / ever"], ans:0},
+  {type:"mc", q:"She ______ just ______ the news.", opts:["has / heard","have / heard","did / hear","is / hearing"], ans:0},
+  {type:"mc", q:"I ______ ______ told him the truth.", opts:["haven't / yet","didn't / already","haven't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"We ______ already ______ dinner.", opts:["have / had","has / had","did / have","are / having"], ans:0},
+  {type:"mc", q:"He ______ ______ woken up. (Todavía no)", opts:["hasn't / yet","didn't / already","hasn't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"They ______ just ______ the match.", opts:["have / won","has / won","did / win","are / winning"], ans:0},
+  {type:"mc", q:"______ you ______ your room ______?", opts:["Have / cleaned / yet","Did / clean / already","Have / cleaned / already","Do / clean / yet"], ans:0},
+  {type:"mc", q:"I ______ already ______ three cups of coffee.", opts:["have / drunk","has / drunk","did / drink","am / drinking"], ans:0},
+  {type:"mc", q:"She ______ just ______ a new car.", opts:["has / bought","have / bought","did / buy","is / buying"], ans:0},
+  {type:"mc", q:"We ______ ______ seen that series. (Todavía no)", opts:["haven't / yet","didn't / already","haven't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"He ______ already ______ his keys.", opts:["has / found","have / found","did / find","is / finding"], ans:0},
+  {type:"mc", q:"I ______ just ______ from vacation.", opts:["have / returned","has / returned","did / return","am / returning"], ans:0},
+  {type:"mc", q:"______ they ______ arrived ______?", opts:["Have / yet","Did / already","Have / already","Do / yet"], ans:0},
+  {type:"mc", q:"She ______ already ______ the dishes.", opts:["has / washed","have / washed","did / wash","is / washing"], ans:0},
+  {type:"mc", q:"I ______ ______ had breakfast. (Todavía no)", opts:["haven't / yet","didn't / already","haven't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"They ______ just ______ the project.", opts:["have / finished","has / finished","did / finish","are / finishing"], ans:0},
+  {type:"mc", q:"He ______ already ______ his passport.", opts:["has / renewed","have / renewed","did / renew","is / renewing"], ans:0},
+  {type:"mc", q:"We ______ ______ been to that museum. (Todavía no)", opts:["haven't / yet","didn't / already","haven't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"I ______ just ______ the message.", opts:["have / received","has / received","did / receive","am / receiving"], ans:0},
+  {type:"mc", q:"She ______ ______ finished her essay. (Todavía no)", opts:["hasn't / yet","didn't / already","hasn't / already","didn't / yet"], ans:0},
+  {type:"mc", q:"They ______ already ______ the tickets.", opts:["have / bought","has / bought","did / buy","are / buying"], ans:0},
+  {type:"mc", q:"I ______ just ______ the light.", opts:["have / turned off","has / turned off","did / turn off","am / turning off"], ans:0},
+
+  // ---- COMPLETAR ORACIÓN (FILL) ----
+  {type:"fill", q:"She ______ (study) English for three hours. (Present Perfect Continuous)", ans:["has been studying","she has been studying"]},
+  {type:"fill", q:"I ______ (know) her since 2015. (Present Perfect)", ans:["have known","i have known","i've known"]},
+  {type:"fill", q:"They ______ (live) here for ten years. (Present Perfect)", ans:["have lived","they have lived","they've lived"]},
+  {type:"fill", q:"He ______ (work) all day. (Present Perfect Continuous)", ans:["has been working","he has been working","he's been working"]},
+  {type:"fill", q:"We ______ (be) friends since childhood. (Present Perfect)", ans:["have been","we have been","we've been"]},
+  {type:"fill", q:"I ______ (not / see) him since Monday. (Present Perfect)", ans:["haven't seen","have not seen","i haven't seen","i have not seen"]},
+  {type:"fill", q:"She ______ (already / finish) her homework. (Present Perfect)", ans:["has already finished","she has already finished","she's already finished"]},
+  {type:"fill", q:"It ______ (rain) since this morning. (Present Perfect Continuous)", ans:["has been raining","it has been raining","it's been raining"]},
+  {type:"fill", q:"I ______ (lose) my keys. (Present Perfect)", ans:["have lost","i have lost","i've lost"]},
+  {type:"fill", q:"______ you ever ______ (be) to London? (Present Perfect)", ans:["have you ever been","have you been"]},
+  {type:"fill", q:"She ______ (wait) for an hour. (Present Perfect Continuous)", ans:["has been waiting","she has been waiting","she's been waiting"]},
+  {type:"fill", q:"We ______ (know) each other for years. (Present Perfect)", ans:["have known","we have known","we've known"]},
+  {type:"fill", q:"He ______ (not / eat) anything today. (Present Perfect)", ans:["hasn't eaten","has not eaten","he hasn't eaten","he has not eaten"]},
+  {type:"fill", q:"I ______ (read) that book twice. (Present Perfect)", ans:["have read","i have read","i've read"]},
+  {type:"fill", q:"They ______ (play) tennis since 2 PM. (Present Perfect Continuous)", ans:["have been playing","they have been playing","they've been playing"]},
+  {type:"fill", q:"She ______ (just / arrive). (Present Perfect)", ans:["has just arrived","she has just arrived","she's just arrived"]},
+  {type:"fill", q:"I ______ (work) here since 2020. (Present Perfect)", ans:["have worked","i have worked","i've worked"]},
+  {type:"fill", q:"How long ______ you ______ (learn) English? (Present Perfect Continuous)", ans:["have you been learning","how long have you been learning"]},
+  {type:"fill", q:"He ______ (break) his arm. (Present Perfect)", ans:["has broken","he has broken","he's broken"]},
+  {type:"fill", q:"We ______ (wait) since 10 AM. (Present Perfect Continuous)", ans:["have been waiting","we have been waiting","we've been waiting"]},
+  {type:"fill", q:"I ______ (never / be) to Australia. (Present Perfect)", ans:["have never been","i have never been","i've never been"]},
+  {type:"fill", q:"She ______ (teach) for 20 years. (Present Perfect)", ans:["has taught","she has taught","she's taught"]},
+  {type:"fill", q:"They ______ (not / arrive) yet. (Present Perfect)", ans:["haven't arrived","have not arrived","they haven't arrived","they have not arrived"]},
+  {type:"fill", q:"I ______ (think) about it all day. (Present Perfect Continuous)", ans:["have been thinking","i have been thinking","i've been thinking"]},
+  {type:"fill", q:"He ______ (be) ill since Monday. (Present Perfect)", ans:["has been","he has been","he's been"]},
+  {type:"fill", q:"I ______ (not / finish) the report yet. (Present Perfect)", ans:["haven't finished","have not finished","i haven't finished","i have not finished"]},
+  {type:"fill", q:"She ______ (live) in Paris since 2018. (Present Perfect)", ans:["has lived","she has lived","she's lived"]},
+  {type:"fill", q:"We ______ (travel) for six months. (Present Perfect Continuous)", ans:["have been traveling","have been travelling","we have been traveling","we've been traveling"]},
+  {type:"fill", q:"I ______ (buy) a new car. (Present Perfect)", ans:["have bought","i have bought","i've bought"]},
+  {type:"fill", q:"She ______ (cook) since noon. (Present Perfect Continuous)", ans:["has been cooking","she has been cooking","she's been cooking"]},
+  {type:"fill", q:"They ______ (already / leave). (Present Perfect)", ans:["have already left","they have already left","they've already left"]},
+  {type:"fill", q:"I ______ (study) all night. (Present Perfect Continuous)", ans:["have been studying","i have been studying","i've been studying"]},
+  {type:"fill", q:"He ______ (write) three books. (Present Perfect)", ans:["has written","he has written","he's written"]},
+  {type:"fill", q:"We ______ (not / see) that film yet. (Present Perfect)", ans:["haven't seen","have not seen","we haven't seen","we have not seen"]},
+  {type:"fill", q:"I ______ (know) him for ten years. (Present Perfect)", ans:["have known","i have known","i've known"]},
+  {type:"fill", q:"She ______ (work) here since January. (Present Perfect)", ans:["has worked","she has worked","she's worked"]},
+  {type:"fill", q:"They ______ (argue) for hours. (Present Perfect Continuous)", ans:["have been arguing","they have been arguing","they've been arguing"]},
+  {type:"fill", q:"I ______ (finish) my meal. (Present Perfect)", ans:["have finished","i have finished","i've finished"]},
+  {type:"fill", q:"He ______ (drive) since 6 AM. (Present Perfect Continuous)", ans:["has been driving","he has been driving","he's been driving"]},
+  {type:"fill", q:"We ______ (be) married for 25 years. (Present Perfect)", ans:["have been","we have been","we've been"]},
+  {type:"fill", q:"She ______ (not / call) me back. (Present Perfect)", ans:["hasn't called","has not called","she hasn't called","she has not called"]},
+  {type:"fill", q:"I ______ (wait) for two hours. (Present Perfect Continuous)", ans:["have been waiting","i have been waiting","i've been waiting"]},
+  {type:"fill", q:"They ______ (know) the truth since yesterday. (Present Perfect)", ans:["have known","they have known","they've known"]},
+  {type:"fill", q:"He ______ (smoke) for 20 years. (Present Perfect Continuous)", ans:["has been smoking","he has been smoking","he's been smoking"]},
+  {type:"fill", q:"I ______ (see) that movie. (Present Perfect)", ans:["have seen","i have seen","i've seen"]},
+  {type:"fill", q:"She ______ (try) to call you. (Present Perfect)", ans:["has tried","she has tried","she's tried"]},
+  {type:"fill", q:"We ______ (plan) this trip for months. (Present Perfect Continuous)", ans:["have been planning","we have been planning","we've been planning"]},
+  {type:"fill", q:"I ______ (not / eat) yet. (Present Perfect)", ans:["haven't eaten","have not eaten","i haven't eaten","i have not eaten"]},
+  {type:"fill", q:"He ______ (learn) Spanish since 2019. (Present Perfect)", ans:["has learned","has learnt","he has learned","he's learned"]},
+  {type:"fill", q:"They ______ (build) that house for a year. (Present Perfect Continuous)", ans:["have been building","they have been building","they've been building"]},
+
+  // ---- JUST / YET / ALREADY (FILL) ----
+  {type:"fill", q:"I ______ (just / finish) my homework. (Present Perfect)", ans:["have just finished","i have just finished","i've just finished"]},
+  {type:"fill", q:"She ______ (already / send) the email. (Present Perfect)", ans:["has already sent","she has already sent","she's already sent"]},
+  {type:"fill", q:"They ______ (not / arrive) yet. (Present Perfect)", ans:["haven't arrived yet","have not arrived yet","they haven't arrived yet"]},
+  {type:"fill", q:"______ you ______ (finish) yet? (Present Perfect)", ans:["have you finished","have you finished yet"]},
+  {type:"fill", q:"I ______ (already / see) that movie. (Present Perfect)", ans:["have already seen","i have already seen","i've already seen"]},
+  {type:"fill", q:"He ______ (just / close) the door. (Present Perfect)", ans:["has just closed","he has just closed","he's just closed"]},
+  {type:"fill", q:"We ______ (already / eat). (Present Perfect)", ans:["have already eaten","we have already eaten","we've already eaten"]},
+  {type:"fill", q:"She ______ (not / call) yet. (Present Perfect)", ans:["hasn't called yet","has not called yet","she hasn't called yet"]},
+  {type:"fill", q:"I ______ (already / read) that book. (Present Perfect)", ans:["have already read","i have already read","i've already read"]},
+  {type:"fill", q:"They ______ (just / arrive) at the airport. (Present Perfect)", ans:["have just arrived","they have just arrived","they've just arrived"]},
+  {type:"fill", q:"He ______ (not / wake up) yet. (Present Perfect)", ans:["hasn't woken up yet","has not woken up yet","he hasn't woken up yet"]},
+  {type:"fill", q:"I ______ (just / receive) your message. (Present Perfect)", ans:["have just received","i have just received","i've just received"]},
+  {type:"fill", q:"She ______ (already / wash) the dishes. (Present Perfect)", ans:["has already washed","she has already washed","she's already washed"]},
+  {type:"fill", q:"We ______ (not / see) that series yet. (Present Perfect)", ans:["haven't seen yet","have not seen yet","we haven't seen yet"]},
+  {type:"fill", q:"They ______ (already / buy) the tickets. (Present Perfect)", ans:["have already bought","they have already bought","they've already bought"]},
+  {type:"fill", q:"I ______ (just / turn off) the light. (Present Perfect)", ans:["have just turned off","i have just turned off","i've just turned off"]},
+  {type:"fill", q:"He ______ (already / find) his keys. (Present Perfect)", ans:["has already found","he has already found","he's already found"]},
+  {type:"fill", q:"She ______ (not / finish) her essay yet. (Present Perfect)", ans:["hasn't finished yet","has not finished yet","she hasn't finished yet"]},
+  {type:"fill", q:"We ______ (already / have) dinner. (Present Perfect)", ans:["have already had","we have already had","we've already had"]},
+  {type:"fill", q:"I ______ (just / return) from vacation. (Present Perfect)", ans:["have just returned","i have just returned","i've just returned"]},
+
+  // ---- FALSO O VERDADERO (TF) ----
+  {type:"tf", q:"'Since' se usa con un período de tiempo (ej. since two years).", ans:false},
+  {type:"tf", q:"'For' se usa con un período de tiempo (ej. for two years).", ans:true},
+  {type:"tf", q:"Past Simple se usa para acciones terminadas en un tiempo pasado específico.", ans:true},
+  {type:"tf", q:"Present Perfect se usa con expresiones de tiempo pasado específico como 'yesterday'.", ans:false},
+  {type:"tf", q:"'I have been studying' es un ejemplo de Present Perfect Continuous.", ans:true},
+  {type:"tf", q:"'I've' es la contracción de 'I have'.", ans:true},
+  {type:"tf", q:"'She's been working' puede ser la contracción de 'She has been working'.", ans:true},
+  {type:"tf", q:"'They've' es la contracción de 'They have'.", ans:true},
+  {type:"tf", q:"Present Perfect Continuous enfatiza la duración de una acción.", ans:true},
+  {type:"tf", q:"'I have seen him yesterday' es gramaticalmente correcta.", ans:false},
+  {type:"tf", q:"'Since' se usa con un punto específico en el tiempo (ej. since 2015).", ans:true},
+  {type:"tf", q:"'I have been knowing him for years' es correcta.", ans:false},
+  {type:"tf", q:"Los verbos de estado (know, like, believe) normalmente no se usan en continuo.", ans:true},
+  {type:"tf", q:"'Did you ever been to Paris?' es correcta.", ans:false},
+  {type:"tf", q:"'Have you ever been to Paris?' es la forma correcta.", ans:true},
+  {type:"tf", q:"Present Perfect puede usarse con 'just', 'already', 'yet'.", ans:true},
+  {type:"tf", q:"'I've finished' significa lo mismo que 'I finished' en todos los contextos.", ans:false},
+  {type:"tf", q:"'How long have you been waiting?' pregunta por la duración.", ans:true},
+  {type:"tf", q:"'When have you arrived?' es correcta en inglés.", ans:false},
+  {type:"tf", q:"'We've been friends since 2010' es correcta.", ans:true},
+  {type:"tf", q:"Past Simple de 'go' es 'goed'.", ans:false},
+  {type:"tf", q:"Past Simple de 'see' es 'saw'.", ans:true},
+  {type:"tf", q:"Past Participle de 'write' es 'wrote'.", ans:false},
+  {type:"tf", q:"Past Participle de 'write' es 'written'.", ans:true},
+  {type:"tf", q:"'I have went' es gramaticalmente correcta.", ans:false},
+  {type:"tf", q:"'I have gone' es gramaticalmente correcta.", ans:true},
+  {type:"tf", q:"'He's' puede ser contracción de 'He is' o 'He has'.", ans:true},
+  {type:"tf", q:"Present Perfect Continuous se forma con have/has + been + verb-ing.", ans:true},
+  {type:"tf", q:"'I've been knowing her for years' es correcta.", ans:false},
+  {type:"tf", q:"'It's been raining' es Present Perfect Continuous.", ans:true},
+  {type:"tf", q:"'Have you finished?' y 'Did you finish?' siempre son intercambiables.", ans:false},
+  {type:"tf", q:"'For' puede usarse con Present Perfect para indicar duración.", ans:true},
+  {type:"tf", q:"'Since' puede usarse con Past Simple.", ans:false},
+  {type:"tf", q:"'I have already eaten' significa que ya comí.", ans:true},
+  {type:"tf", q:"'I have ever been to Japan' es correcta.", ans:false},
+  {type:"tf", q:"'Have you ever been to Japan?' es correcta.", ans:true},
+  {type:"tf", q:"'Did you ever go to Japan?' es correcta.", ans:true},
+  {type:"tf", q:"Present Perfect nunca se usa con 'never'.", ans:false},
+  {type:"tf", q:"'I've never seen this' es correcta.", ans:true},
+  {type:"tf", q:"'She has been to Paris three times' es correcta.", ans:true},
+  {type:"tf", q:"'Just' en Present Perfect significa 'acabar de'.", ans:true},
+  {type:"tf", q:"'Yet' se usa principalmente en oraciones negativas e interrogativas.", ans:true},
+  {type:"tf", q:"'Already' se usa en oraciones afirmativas e interrogativas.", ans:true},
+  {type:"tf", q:"'I have just finished' significa 'acabo de terminar'.", ans:true},
+  {type:"tf", q:"'I have finished yet' es correcta.", ans:false},
+  {type:"tf", q:"'Have you finished already?' puede expresar sorpresa.", ans:true},
+  {type:"tf", q:"'Yet' se coloca normalmente al final de la oración.", ans:true},
+  {type:"tf", q:"'Already' se coloca entre have/has y el participio.", ans:true},
+  {type:"tf", q:"'Just' se coloca entre have/has y el participio.", ans:true},
+  {type:"tf", q:"'I haven't already finished' es correcta.", ans:false},
+
+  // ---- ELEGIR RESPUESTA A UNA PREGUNTA ----
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'When did you start learning English?'", opts:["I have started learning English since 2020.","I am learning English for 2020.","I started learning English in 2020.","I have been started learning English in 2020."], ans:2},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long have you lived here?'", opts:["I live here since 2015.","I've lived here for five years.","I lived here for five years.","I am living here five years."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you ever been to Rome?'", opts:["Yes, I went there last year.","Yes, I have been there last year.","Yes, I have gone there last year.","Yes, I was there since last year."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What have you been doing?'", opts:["I study English.","I studied English.","I've been studying English.","I am study English."], ans:2},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Did you see the film?'", opts:["Yes, I have seen it yesterday.","Yes, I saw it yesterday.","Yes, I've been seeing it.","Yes, I see it."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long have you been waiting?'", opts:["I wait for an hour.","I've been waiting for an hour.","I waited for an hour.","I am waiting since an hour."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you finished your homework?'", opts:["Yes, I finished it yesterday.","Yes, I've just finished it.","Yes, I finish it.","Yes, I am finishing it."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'When did they arrive?'", opts:["They have arrived at 5.","They arrived at 5.","They have been arriving at 5.","They arrive at 5."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How many times have you been to London?'", opts:["I went there three times.","I've been there three times.","I am going there three times.","I go there three times."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Why are you tired?'", opts:["I worked all day.","I've been working all day.","I work all day.","I am working all day."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Has she called you?'", opts:["Yes, she called me yesterday.","Yes, she has called me.","Yes, she calls me.","Yes, she is calling me."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What did you do last weekend?'", opts:["I have visited my parents.","I visited my parents.","I have been visiting my parents.","I visit my parents."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long have you known her?'", opts:["I know her since 2010.","I've known her since 2010.","I knew her since 2010.","I am knowing her since 2010."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you eaten yet?'", opts:["Yes, I ate an hour ago.","Yes, I have eaten an hour ago.","Yes, I eat an hour ago.","Yes, I am eating an hour ago."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Where have you been?'", opts:["I went to the store.","I've been to the store.","I go to the store.","I am to the store."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Did you like the food?'", opts:["Yes, I have liked it.","Yes, I liked it.","Yes, I've been liking it.","Yes, I like it."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long has it been raining?'", opts:["It rains since morning.","It's been raining since morning.","It rained since morning.","It is raining since morning."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you ever met a famous person?'", opts:["Yes, I met one last year.","Yes, I have met one last year.","Yes, I meet one last year.","Yes, I am meeting one last year."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What's the matter?'", opts:["I lost my keys.","I've lost my keys.","I lose my keys.","I am losing my keys."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'When did she leave?'", opts:["She has left ten minutes ago.","She left ten minutes ago.","She has been leaving ten minutes ago.","She leaves ten minutes ago."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Are you hungry?'", opts:["No, I ate already.","No, I've already eaten.","No, I eat already.","No, I am eating already."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Why is the ground wet?'", opts:["It rained.","It's been raining.","It rains.","It is rain."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Do you know Madrid?'", opts:["Yes, I went there twice.","Yes, I've been there twice.","Yes, I go there twice.","Yes, I am going there twice."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long have you had that car?'", opts:["I have it since 2019.","I've had it since 2019.","I had it since 2019.","I am having it since 2019."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What have you been up to?'", opts:["I studied.","I've been studying.","I study.","I am study."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Did you finish the project?'", opts:["Yes, I've finished it yesterday.","Yes, I finished it yesterday.","Yes, I've been finishing it yesterday.","Yes, I finish it yesterday."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you seen my glasses?'", opts:["Yes, I saw them on the table.","Yes, I've seen them on the table.","Yes, I see them on the table.","Yes, I am seeing them on the table."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long have they been married?'", opts:["They are married for 10 years.","They've been married for 10 years.","They were married for 10 years.","They marry for 10 years."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Why are you so wet?'", opts:["I walked in the rain.","I've been walking in the rain.","I walk in the rain.","I am walk in the rain."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Has the mail arrived?'", opts:["Yes, it arrived this morning.","Yes, it has arrived this morning.","Yes, it arrives this morning.","Yes, it is arriving this morning."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What did you do yesterday?'", opts:["I have gone shopping.","I went shopping.","I've been shopping.","I go shopping."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you ever tried sushi?'", opts:["Yes, I tried it last week.","Yes, I've tried it last week.","Yes, I try it last week.","Yes, I am trying it last week."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'How long has she been teaching?'", opts:["She teaches since 2010.","She's been teaching since 2010.","She taught since 2010.","She is teaching since 2010."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Did you call him?'", opts:["Yes, I've called him an hour ago.","Yes, I called him an hour ago.","Yes, I've been calling him an hour ago.","Yes, I call him an hour ago."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'What's happened?'", opts:["Someone stole my bike.","Someone has stolen my bike.","Someone steals my bike.","Someone is stealing my bike."], ans:1},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you finished the report yet?'", opts:["Yes, I've already finished it.","Yes, I finished it already yesterday.","Yes, I finish it yet.","Yes, I am finishing it yet."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Has the movie started?'", opts:["Yes, it has just started.","Yes, it just started already.","Yes, it has started yet.","Yes, it starts just."], ans:0},
+  {type:"mc", q:"¿Cuál es la respuesta correcta a: 'Have you had lunch?'", opts:["No, I haven't eaten yet.","No, I didn't eat already.","No, I don't eat yet.","No, I am not eating yet."], ans:0},
+
+  // ---- AUDIO ----
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have been waiting for the bus for 20 minutes.", opts:["I have been waiting for the bus for 20 minutes.","I have waited for the bus since 20 minutes.","I waited for the bus for 20 minutes.","I am waiting for the bus since 20 minutes."], ans:0},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"She has lived in London since 2015.", opts:["She lived in London since 2015.","She has lived in London since 2015.","She has been living in London for 2015.","She lives in London since 2015."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have already finished my homework.", opts:["I already finished my homework.","I have already finished my homework.","I have been finishing my homework.","I am already finishing my homework."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"They have been playing tennis since 2 PM.", opts:["They played tennis since 2 PM.","They have played tennis for 2 PM.","They have been playing tennis since 2 PM.","They play tennis since 2 PM."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"He has just arrived at the airport.", opts:["He just arrived at the airport.","He has just arrived at the airport.","He has been arriving at the airport.","He is just arriving at the airport."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have never been to Japan.", opts:["I never went to Japan.","I have never been to Japan.","I have never gone to Japan.","I never been to Japan."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"We have known each other for ten years.", opts:["We know each other for ten years.","We knew each other since ten years.","We have known each other for ten years.","We have been knowing each other for ten years."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"She has been studying English for three hours.", opts:["She studied English for three hours.","She has studied English since three hours.","She has been studying English for three hours.","She studies English for three hours."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have lost my keys.", opts:["I lost my keys.","I have lost my keys.","I have been losing my keys.","I am losing my keys."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"It has been raining since this morning.", opts:["It rained since this morning.","It has rained for this morning.","It has been raining since this morning.","It rains since this morning."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"Have you ever been to Paris?", opts:["Did you ever go to Paris?","Have you ever been to Paris?","Have you ever gone to Paris?","Do you ever go to Paris?"], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have been working here since 2018.", opts:["I worked here since 2018.","I have worked here for 2018.","I have been working here since 2018.","I work here since 2018."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"She has already left the office.", opts:["She already left the office.","She has already left the office.","She has been leaving the office.","She is already leaving the office."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"They have been married for 25 years.", opts:["They are married for 25 years.","They were married since 25 years.","They have been married for 25 years.","They have married for 25 years."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have just seen him at the store.", opts:["I just saw him at the store.","I have just seen him at the store.","I have been seeing him at the store.","I am just seeing him at the store."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"How long have you been learning English?", opts:["How long did you learn English?","How long have you learned English for?","How long have you been learning English?","How long are you learning English?"], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"He has worked here for five years.", opts:["He worked here since five years.","He has worked here for five years.","He has been worked here for five years.","He works here for five years."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"We haven't seen that movie yet.", opts:["We didn't see that movie yet.","We haven't seen that movie yet.","We haven't been seeing that movie yet.","We don't see that movie yet."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have been thinking about it all day.", opts:["I thought about it all day.","I have thought about it since all day.","I have been thinking about it all day.","I think about it all day."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"She has taught at this school since 2010.", opts:["She taught at this school since 2010.","She has taught at this school since 2010.","She has been teaching at this school for 2010.","She teaches at this school since 2010."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have finished my report.", opts:["I finished my report.","I have finished my report.","I have been finishing my report.","I am finishing my report."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"The children have been playing in the garden.", opts:["The children played in the garden.","The children have played in the garden for.","The children have been playing in the garden.","The children play in the garden."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have known her since childhood.", opts:["I knew her since childhood.","I have known her since childhood.","I have been knowing her since childhood.","I know her since childhood."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"They have just finished the project.", opts:["They just finished the project.","They have just finished the project.","They have been finishing the project.","They are just finishing the project."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have been reading this book for two weeks.", opts:["I read this book for two weeks.","I have read this book since two weeks.","I have been reading this book for two weeks.","I am reading this book for two weeks."], ans:2},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"I have just finished my dinner.", opts:["I just finished my dinner.","I have just finished my dinner.","I have been finishing my dinner.","I am just finishing my dinner."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"Has she called you yet?", opts:["Did she call you yet?","Has she called you yet?","Has she been calling you yet?","Does she call you yet?"], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"We have already packed our bags.", opts:["We already packed our bags.","We have already packed our bags.","We have been packing our bags.","We are already packing our bags."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"He hasn't arrived yet.", opts:["He didn't arrive yet.","He hasn't arrived yet.","He hasn't been arriving yet.","He doesn't arrive yet."], ans:1},
+  {type:"audio", q:"Escucha y elige lo que se dice:", audio:"They have just left the building.", opts:["They just left the building.","They have just left the building.","They have been leaving the building.","They are just leaving the building."], ans:1}
+];
+
+// ============================================================
+// GENERADOR AUTOMÁTICO PARA LLEGAR A 300+
+// ============================================================
+(function expandBank() {
+  const subjects = [
+    {s:"I", have:"have", has:"has", be:"am"},
+    {s:"You", have:"have", has:"has", be:"are"},
+    {s:"He", have:"have", has:"has", be:"is"},
+    {s:"She", have:"have", has:"has", be:"is"},
+    {s:"We", have:"have", has:"has", be:"are"},
+    {s:"They", have:"have", has:"has", be:"are"}
+  ];
+  const verbs = [
+    {base:"study", ing:"studying", pp:"studied", past:"studied"},
+    {base:"work", ing:"working", pp:"worked", past:"worked"},
+    {base:"live", ing:"living", pp:"lived", past:"lived"},
+    {base:"wait", ing:"waiting", pp:"waited", past:"waited"},
+    {base:"play", ing:"playing", pp:"played", past:"played"},
+    {base:"read", ing:"reading", pp:"read", past:"read"},
+    {base:"write", ing:"writing", pp:"written", past:"wrote"},
+    {base:"eat", ing:"eating", pp:"eaten", past:"ate"},
+    {base:"drink", ing:"drinking", pp:"drunk", past:"drank"},
+    {base:"run", ing:"running", pp:"run", past:"ran"},
+    {base:"walk", ing:"walking", pp:"walked", past:"walked"},
+    {base:"cook", ing:"cooking", pp:"cooked", past:"cooked"},
+    {base:"travel", ing:"traveling", pp:"traveled", past:"traveled"},
+    {base:"learn", ing:"learning", pp:"learned", past:"learned"},
+    {base:"teach", ing:"teaching", pp:"taught", past:"taught"},
+    {base:"drive", ing:"driving", pp:"driven", past:"drove"},
+    {base:"sleep", ing:"sleeping", pp:"slept", past:"slept"},
+    {base:"talk", ing:"talking", pp:"talked", past:"talked"},
+    {base:"watch", ing:"watching", pp:"watched", past:"watched"},
+    {base:"listen", ing:"listening", pp:"listened", past:"listened"}
+  ];
+  const times = ["for two hours","for three days","for a week","for a month","for ten years","since 2015","since Monday","since last year","since childhood","since 8 AM","all day","all morning"];
+
+  let idx = 0;
+  let attempts = 0;
+  while (QUESTION_BANK.length < 300 && attempts < 2000) {
+    attempts++;
+    const subj = subjects[idx % subjects.length];
+    const verb = verbs[(idx + 3) % verbs.length];
+    const time = times[(idx * 2 + 1) % times.length];
+    const hasOrHave = subj.has === "has" ? "has" : "have";
+
+    if (idx % 4 === 0) {
+      // MC: Present Perfect
+      const correct = `${subj.s} ${hasOrHave} ${verb.pp} ${time}.`;
+      const distractors = [
+        `${subj.s} ${verb.past} ${time}.`,
+        `${subj.s} ${subj.be} ${verb.ing} ${time}.`,
+        `${subj.s} ${hasOrHave} been ${verb.ing} ${time}.`
+      ];
+      const opts = shuffleArr([correct, ...distractors.slice(0,3)]);
+      QUESTION_BANK.push({
+        type:"mc",
+        q:`${subj.s} ______ ${verb.base} ${time}. (Present Perfect)`,
+        opts: opts,
+        ans: opts.indexOf(correct)
+      });
+    } else if (idx % 4 === 1) {
+      // MC: Present Perfect Continuous
+      const correct = `${subj.s} ${hasOrHave} been ${verb.ing} ${time}.`;
+      const distractors = [
+        `${subj.s} ${verb.past} ${time}.`,
+        `${subj.s} ${hasOrHave} ${verb.pp} ${time}.`,
+        `${subj.s} ${subj.be} ${verb.ing} ${time}.`
+      ];
+      const opts = shuffleArr([correct, ...distractors.slice(0,3)]);
+      QUESTION_BANK.push({
+        type:"mc",
+        q:`${subj.s} ______ ${verb.base} ${time}. (Present Perfect Continuous)`,
+        opts: opts,
+        ans: opts.indexOf(correct)
+      });
+    } else if (idx % 4 === 2) {
+      // MC: just/yet/already
+      const variant = idx % 3;
+      if (variant === 0) {
+        const correct = `${subj.s} ${hasOrHave} just ${verb.pp}.`;
+        const distractors = [
+          `${subj.s} ${verb.past} just.`,
+          `${subj.s} ${hasOrHave} been ${verb.ing}.`,
+          `${subj.s} ${subj.be} ${verb.ing}.`
+        ];
+        const opts = shuffleArr([correct, ...distractors]);
+        QUESTION_BANK.push({
+          type:"mc",
+          q:`${subj.s} ______ just ______ (${verb.base}). (Present Perfect)`,
+          opts: opts,
+          ans: opts.indexOf(correct)
+        });
+      } else if (variant === 1) {
+        const correct = `${subj.s} ${hasOrHave} already ${verb.pp}.`;
+        const distractors = [
+          `${subj.s} ${verb.past} already.`,
+          `${subj.s} ${hasOrHave} been ${verb.ing}.`,
+          `${subj.s} ${subj.be} ${verb.ing}.`
+        ];
+        const opts = shuffleArr([correct, ...distractors]);
+        QUESTION_BANK.push({
+          type:"mc",
+          q:`${subj.s} ______ already ______ (${verb.base}). (Present Perfect)`,
+          opts: opts,
+          ans: opts.indexOf(correct)
+        });
+      } else {
+        const correct = `${subj.s} ${hasOrHave === "has" ? "hasn't" : "haven't"} ${verb.pp} yet.`;
+        const distractors = [
+          `${subj.s} ${verb.past} yet.`,
+          `${subj.s} ${hasOrHave} been ${verb.ing} yet.`,
+          `${subj.s} ${subj.be} not ${verb.ing} yet.`
+        ];
+        const opts = shuffleArr([correct, ...distractors]);
+        QUESTION_BANK.push({
+          type:"mc",
+          q:`${subj.s} ______ (not) ______ (${verb.base}) yet. (Present Perfect)`,
+          opts: opts,
+          ans: opts.indexOf(correct)
+        });
+      }
+    } else {
+      // TF just/yet/already
+      const statements = [
+        {q:`'${subj.s} ${hasOrHave} just ${verb.pp}' es correcta.`, ans:true},
+        {q:`'${subj.s} ${hasOrHave} already ${verb.pp}' es correcta.`, ans:true},
+        {q:`'${subj.s} ${verb.past} yet' es correcta en Present Perfect.`, ans:false},
+        {q:`'${subj.s} ${hasOrHave} ${verb.pp} yet' es correcta en afirmativa.`, ans:false},
+        {q:`'Yet' se usa principalmente en negativas e interrogativas.`, ans:true},
+        {q:`'Already' se usa en afirmativas e interrogativas.`, ans:true},
+        {q:`'Just' significa 'acabar de' en Present Perfect.`, ans:true}
+      ];
+      const st = statements[idx % statements.length];
+      QUESTION_BANK.push({type:"tf", q: st.q, ans: st.ans});
+    }
+    idx++;
+  }
+})();
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+function shuffleArr(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getFailedQuestions() {
+  try {
+    const raw = localStorage.getItem('grammarQuizFailed');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function saveFailedQuestions(arr) {
+  try { localStorage.setItem('grammarQuizFailed', JSON.stringify(arr)); } catch(e) {}
+}
+
+function addFailedQuestion(q) {
+  const failed = getFailedQuestions();
+  // Evitar duplicados comparando texto de pregunta
+  if (!failed.some(f => f.q === q.q)) {
+    failed.push(q);
+    saveFailedQuestions(failed);
+  }
+}
+
+function removeFailedQuestion(q) {
+  let failed = getFailedQuestions();
+  failed = failed.filter(f => f.q !== q.q);
+  saveFailedQuestions(failed);
+}
+
+function clearFailed() {
+  if (confirm('¿Seguro que quieres borrar el historial de preguntas falladas?')) {
+    localStorage.removeItem('grammarQuizFailed');
+    updateFailedCount();
+    alert('Historial borrado.');
+  }
+}
+
+function updateFailedCount() {
+  const count = getFailedQuestions().length;
+  document.getElementById('failedCount').textContent = count;
+  const btn = document.getElementById('reviewBtn');
+  if (count > 0) btn.disabled = false;
+  else btn.disabled = true;
+}
+
+// ============================================================
+// SELECCIÓN Y RENDERIZADO
+// ============================================================
+const QUESTIONS_PER_QUIZ = 50;
+let selectedQuestions = [];
+let answeredCount = 0;
+let score = 0;
+let isReviewMode = false;
+
+function selectRandomQuestions() {
+  const shuffled = shuffleArr(QUESTION_BANK);
+  selectedQuestions = shuffled.slice(0, QUESTIONS_PER_QUIZ);
+}
+
+function startReviewMode() {
+  const failed = getFailedQuestions();
+  if (failed.length === 0) { alert('No hay preguntas falladas para repasar.'); return; }
+  selectedQuestions = shuffleArr(failed).slice(0, Math.min(50, failed.length));
+  isReviewMode = true;
+  answeredCount = 0;
+  score = 0;
+  document.getElementById('questionsContainer').innerHTML = '';
+  document.getElementById('scoreBox').style.display = 'none';
+  document.getElementById('progress').style.width = '0%';
+  document.getElementById('modeBadge').textContent = `🔁 Modo repaso: ${selectedQuestions.length} preguntas falladas`;
+  document.getElementById('progressText').textContent = `0 / ${selectedQuestions.length} respondidas`;
+  renderQuestions();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  selectedQuestions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card' + (isReviewMode ? ' review' : '');
+    card.dataset.index = i;
+    card.dataset.answered = 'false';
+
+    let labelText = '';
+    if (q.type === 'mc') labelText = 'Opción múltiple';
+    else if (q.type === 'fill') labelText = 'Completar oración';
+    else if (q.type === 'tf') labelText = 'Falso o Verdadero';
+    else if (q.type === 'audio') labelText = '🎧 Audio';
+
+    let html = `<span class="question-label">${labelText}</span>`;
+    html += `<p class="question-text">${i + 1}. ${q.q}</p>`;
+
+    if (q.type === 'audio') {
+      const safeAudio = q.audio.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      html += `<button class="audio-btn" onclick="playAudioText('${safeAudio}', this)">🔊 Reproducir audio</button>`;
+    }
+
+    if (q.type === 'fill') {
+      html += `<input type="text" class="fill-input" placeholder="Escribe tu respuesta..." data-idx="${i}">`;
+    } else {
+      const opts = q.type === 'tf'
+        ? [{text:'Verdadero', val:'true'}, {text:'Falso', val:'false'}]
+        : q.opts.map((o, idx) => ({text:o, val:idx}));
+      const shuffledOpts = shuffleArr(opts);
+
+      html += '<div class="options">';
+      shuffledOpts.forEach((o) => {
+        html += `<label class="option">
+          <input type="radio" name="q${i}" value="${o.val}">
+          <span>${o.text}</span>
+        </label>`;
+      });
+      html += '</div>';
+    }
+
+    html += `<button class="check-btn" onclick="checkAnswer(${i}, this)">Comprobar</button>`;
+    html += `<div class="feedback"></div>`;
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+// ============================================================
+// AUDIO
+// ============================================================
+function playAudioText(text, btn) {
+  btn.classList.add('playing');
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US';
+  utt.rate = 0.85;
+  utt.onend = () => btn.classList.remove('playing');
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utt);
+}
+
+// ============================================================
+// VERIFICACIÓN
+// ============================================================
+function checkAnswer(idx, btn) {
+  const q = selectedQuestions[idx];
+  const card = btn.closest('.question-card');
+  const feedback = card.querySelector('.feedback');
+
+  if (card.dataset.answered === 'true') return;
+
+  let isCorrect = false;
+  let userAnswer = '';
+
+  if (q.type === 'fill') {
+    const input = card.querySelector('.fill-input');
+    userAnswer = input.value.trim().toLowerCase().replace(/\.$/, '').replace(/\s+/g, ' ');
+    const validAnswers = q.ans.map(a => a.toLowerCase().replace(/\.$/, '').replace(/\s+/g, ' '));
+    isCorrect = validAnswers.includes(userAnswer);
+    input.disabled = true;
+    input.classList.add(isCorrect ? 'correct' : 'incorrect');
+  } else {
+    const selected = card.querySelector('input[type=radio]:checked');
+    if (!selected) { alert('Selecciona una opción'); return; }
+
+    if (q.type === 'tf') {
+      isCorrect = (selected.value === 'true') === q.ans;
+    } else {
+      isCorrect = parseInt(selected.value) === q.ans;
+    }
+
+    card.querySelectorAll('.option').forEach(opt => {
+      const input = opt.querySelector('input');
+      input.disabled = true;
+      const val = q.type === 'tf' ? input.value : parseInt(input.value);
+      if (q.type === 'tf') {
+        if ((val === 'true') === q.ans) opt.classList.add('correct');
+        else if (input.checked) opt.classList.add('incorrect');
+      } else {
+        if (val === q.ans) opt.classList.add('correct');
+        else if (input.checked) opt.classList.add('incorrect');
+      }
+      opt.style.cursor = 'default';
+    });
+  }
+
+  // Guardar / eliminar de falladas
+  if (isCorrect) {
+    score++;
+    feedback.className = 'feedback show correct';
+    feedback.textContent = '✅ ¡Correcto!';
+    if (isReviewMode) removeFailedQuestion(q);
+  } else {
+    feedback.className = 'feedback show incorrect';
+    let correctText = '';
+    if (q.type === 'fill') correctText = q.ans[0];
+    else if (q.type === 'tf') correctText = q.ans ? 'Verdadero' : 'Falso';
+    else correctText = q.opts[q.ans];
+    feedback.textContent = `❌ Incorrecto. Respuesta correcta: "${correctText}"`;
+    if (!isReviewMode) addFailedQuestion(q);
+  }
+
+  btn.disabled = true;
+  card.dataset.answered = 'true';
+  answeredCount++;
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = selectedQuestions.length;
+  const pct = (answeredCount / total) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${answeredCount} / ${total} respondidas · Aciertos: ${score}`;
+
+  if (answeredCount === total) {
+    setTimeout(() => {
+      document.getElementById('finalScore').textContent = `${score} / ${total}`;
+      const pctScore = Math.round((score / total) * 100);
+      let msg = '';
+      if (pctScore >= 90) msg = '🏆 ¡Excelente! Dominas estos tiempos verbales.';
+      else if (pctScore >= 70) msg = '👍 ¡Muy bien! Solo unos detalles por pulir.';
+      else if (pctScore >= 50) msg = '📚 Buen intento. Repasa since/for y los tiempos.';
+      else msg = '💪 ¡Sigue practicando! Vuelve a intentarlo.';
+      document.getElementById('finalPct').textContent = `${pctScore}% · ${msg}`;
+
+      const failedCount = getFailedQuestions().length;
+      const failedInfo = document.getElementById('failedInfo');
+      if (failedCount > 0) {
+        failedInfo.style.display = 'block';
+        failedInfo.textContent = `📌 Tienes ${failedCount} pregunta(s) fallada(s) guardada(s) para repasar.`;
+        document.getElementById('reviewBtn2').style.display = 'inline-block';
+      } else {
+        failedInfo.style.display = 'none';
+        document.getElementById('reviewBtn2').style.display = 'none';
+      }
+
+      document.getElementById('scoreBox').style.display = 'block';
+      document.getElementById('scoreBox').scrollIntoView({ behavior: 'smooth' });
+      updateFailedCount();
+    }, 400);
+  }
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+(function init() {
+  updateFailedCount();
+  selectRandomQuestions();
+  renderQuestions();
+})();
+</script>
+</body>
+</html>
